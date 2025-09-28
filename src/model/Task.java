@@ -11,8 +11,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class Task {
-    private UUID ID;
-    private UUID projectID;
+    private Integer ID;
+    private Integer projectID;
     private String title;
     private String description;
     private TeamMember responsible;
@@ -21,7 +21,10 @@ public class Task {
     private Status status;
     private Visibility visibility;
 
-    public Task(UUID ID, UUID projectID, String title, String description, TeamMember responsible, String creationDate, String deadline, Status status, Visibility visibility) {
+    public Task() {
+    }
+
+    public Task(Integer ID, Integer projectID, String title, String description, TeamMember responsible, String creationDate, String deadline, Status status, Visibility visibility) {
         this.ID = ID;
         this.projectID = projectID;
         this.title = title;
@@ -33,51 +36,19 @@ public class Task {
         this.visibility = visibility;
     }
 
-    public Task(UUID projectID, String title, String description, TeamMember responsible, String deadline) {
-        this.ID = UUID.randomUUID();
-        this.projectID = projectID;
-        this.title = title;
-        this.description = description;
-        this.responsible = responsible;
-        this.creationDate = LocalDate.now().toString();
-        this.deadline = deadline;
-        this.status = Status.PENDING;
-        this.visibility = Visibility.VISIBLE;
-    }
-
-    /**
-     * Creates a new task using as a base a JSONObject.
-     * @param taskJSON is the JSONObject used as starting point.
-     * */
-    public Task(JSONObject taskJSON) {
-        try {
-            this.ID = UUID.fromString(taskJSON.getString("ID"));
-            this.projectID = UUID.fromString(taskJSON.getString("projectID"));
-            this.title = taskJSON.getString("title");
-            this.description = taskJSON.getString("description");
-            this.responsible = new TeamMember(taskJSON.getJSONObject("responsible"));
-            this.creationDate = taskJSON.getString("creationDate");
-            this.deadline = taskJSON.getString("deadline");
-            this.status = Status.valueOf(taskJSON.getString("status"));
-            this.visibility = Visibility.valueOf(taskJSON.getString("visibility"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public UUID getID() {
+    public Integer getID() {
         return ID;
     }
 
-    public void setID(UUID ID) {
+    public void setID(Integer ID) {
         this.ID = ID;
     }
 
-    public UUID getProjectID() {
+    public Integer getProjectID() {
         return projectID;
     }
 
-    public void setProjectID(UUID projectID) {
+    public void setProjectID(Integer projectID) {
         this.projectID = projectID;
     }
 
@@ -143,32 +114,6 @@ public class Task {
      * */
     public void delayDeadline(String newDeadline) {
         setDeadline(newDeadline);
-    }
-
-    /**
-     * Serializes the class Task.
-     * @return a JSONObject representation of the class.
-     * */
-    public JSONObject serialize() {
-        JSONObject taskJSON = null;
-
-        try {
-            taskJSON = new JSONObject();
-
-            taskJSON.put("ID", ID.toString());
-            taskJSON.put("projectID", projectID.toString());
-            taskJSON.put("title", title);
-            taskJSON.put("description", description);
-            taskJSON.put("responsible", responsible.serialize());
-            taskJSON.put("creationDate", creationDate);
-            taskJSON.put("deadline", deadline);
-            taskJSON.put("status", status.toString());
-            taskJSON.put("visibility", visibility.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return taskJSON;
     }
 
     @Override
