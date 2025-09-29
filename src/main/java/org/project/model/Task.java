@@ -1,14 +1,7 @@
-package model;
+package org.project.model;
 
-import model.enums.Status;
-import model.enums.Visibility;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.sql.Statement;
-import java.time.LocalDate;
-import java.util.Objects;
-import java.util.UUID;
+import org.project.model.enums.Status;
+import org.project.model.enums.Visibility;
 
 public class Task {
     private Integer ID;
@@ -106,52 +99,5 @@ public class Task {
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
-    }
-
-    /**
-     * Delays the deadline pontificated when instantiated the task.
-     * @param newDeadline is the deadline that replace the old one.
-     * */
-    public void delayDeadline(String newDeadline) {
-        setDeadline(newDeadline);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Task task = (Task) o;
-        return Objects.equals(ID, task.ID) && Objects.equals(title, task.title) && Objects.equals(description, task.description) && Objects.equals(responsible, task.responsible) && Objects.equals(creationDate, task.creationDate) && Objects.equals(deadline, task.deadline) && status == task.status && visibility == task.visibility;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(ID, title, description, responsible, creationDate, deadline, status, visibility);
-    }
-
-    @Override
-    public String toString() {
-        return String.format(
-                "Task\n" +
-                        "  ID: %s,\n" +
-                        "  Project: %s,\n" +
-                        "  Title: '%s',\n" +
-                        "  Description: '%s',\n" +
-                        "  Responsible: %s,\n" +
-                        "  Creation Date: '%s',\n" +
-                        "  Deadline: '%s',\n" +
-                        "  Status: %s,\n" +
-                        "  Visibility: %s\n"
-                ,
-                ID,
-                projectID,
-                title,
-                description,
-                responsible.getName(),
-                creationDate,
-                deadline,
-                status,
-                visibility
-        );
     }
 }

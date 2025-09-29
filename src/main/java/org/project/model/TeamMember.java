@@ -1,18 +1,18 @@
-package model;
+package org.project.model;
 
-import model.enums.Role;
-import model.enums.Visibility;
+
+import org.project.model.enums.Role;
+import org.project.model.enums.Visibility;
 
 import java.util.HashSet;
-import java.util.UUID;
 
 public class TeamMember extends User {
-    private HashSet<UUID> ongoingProjects;
+    private HashSet<Integer> ongoingProjects;
     private Role role;
 
     public TeamMember() { super(); }
 
-    public TeamMember(Integer ID, String name, String email, String password, Visibility visibility, HashSet<UUID> ongoingProjects, Role role) {
+    public TeamMember(Integer ID, String name, String email, String password, Visibility visibility, HashSet<Integer> ongoingProjects, Role role) {
         super(ID, name, email, password, visibility);
         this.ongoingProjects = ongoingProjects;
         this.role = role;
@@ -32,17 +32,5 @@ public class TeamMember extends User {
 
     public void setRole(Role role) {
         this.role = role;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() +
-                String.format(
-                    "  ongoingProjects: %s,\n" +
-                    "  role: %s\n"
-                    ,
-                    ongoingProjects,
-                    role
-                );
     }
 }

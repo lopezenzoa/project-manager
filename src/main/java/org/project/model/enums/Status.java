@@ -1,4 +1,4 @@
-package model.enums;
+package org.project.model.enums;
 
 public enum Status {
     PENDING, FINISHED

@@ -1,4 +1,4 @@
-package model.interfaces;
+package org.project.model.interfaces;
 
 public interface CRUDable<T> {
     void create();

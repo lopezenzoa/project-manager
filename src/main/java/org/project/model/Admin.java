@@ -1,9 +1,8 @@
-package model;
+package org.project.model;
 
-import model.enums.Visibility;
+import org.project.model.enums.Visibility;
 
 import java.util.HashSet;
-import java.util.UUID;
 
 public class Admin extends User {
     private HashSet<Leader> dependants;
@@ -21,15 +20,5 @@ public class Admin extends User {
 
     public void setDependants(HashSet<Leader> dependants) {
         this.dependants = dependants;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() +
-                String.format(
-                    "  dependants: %s\n"
-                    ,
-                    dependants
-                );
     }
 }

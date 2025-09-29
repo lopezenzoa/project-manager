@@ -1,12 +1,8 @@
-package model;
+package org.project.model;
 
-import model.enums.Status;
-import model.enums.Visibility;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.project.model.enums.Status;
+import org.project.model.enums.Visibility;
 
-import java.time.LocalDate;
 import java.util.*;
 
 public class Project {
@@ -115,46 +111,5 @@ public class Project {
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Project project = (Project) o;
-        return Objects.equals(ID, project.ID) && Objects.equals(admin, project.admin) && Objects.equals(leader, project.leader) && Objects.equals(team, project.team) && Objects.equals(tasks, project.tasks) && Objects.equals(name, project.name) && Objects.equals(creationDate, project.creationDate) && Objects.equals(deadline, project.deadline) && status == project.status && visibility == project.visibility;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(ID, admin, leader, team, tasks, name, creationDate, deadline, status, visibility);
-    }
-
-    @Override
-    public String toString() {
-        return String.format(
-                "Project\n" +
-                        "  ID: %s,\n" +
-                        "  Admin: %s,\n" +
-                        "  Leader: %s,\n" +
-                        "  Team: %s,\n" +
-                        "  Tasks: %s,\n" +
-                        "  Name: '%s',\n" +
-                        "  Creation Date: '%s',\n" +
-                        "  Deadline: '%s',\n" +
-                        "  Status: %s,\n" +
-                        "  Visibility: %s\n"
-                ,
-                ID,
-                admin.getName(),
-                leader.getName(),
-                team,
-                tasks,
-                name,
-                creationDate,
-                deadline,
-                status,
-                visibility
-        );
     }
 }
