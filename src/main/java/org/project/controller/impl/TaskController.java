@@ -1,27 +1,15 @@
-package controller;
+package org.project.controller.impl;
 
-import database.DatabaseController;
-import model.Task;
-import model.enums.Status;
-import model.enums.Visibility;
-import model.interfaces.CRUDable;
-import view.TaskView;
+import org.project.controller.ITaskController;
+import org.project.model.Task;
+import org.project.model.enums.Active;
+import org.project.view.ITaskView;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-public class TaskController implements CRUDable<Task> {
+public class TaskController implements ITaskController {
     public Task model;
-    public TaskView view;
+    public ITaskView view;
 
-    // Database Connection
-    private final String URL = "jdbc:mysql://localhost:3306/PM_Java";
-    private final String USERNAME = "root";
-    private final String PASSWORD = "password123A$";
-
-    public TaskController(Task model, TaskView view) {
+    public TaskController(Task model, ITaskView view) {
         this.model = model;
         this.view = view;
     }
@@ -36,6 +24,7 @@ public class TaskController implements CRUDable<Task> {
 
     @Override
     public void create() {
+        /*
         String query = String.format(
                 "INSERT INTO Task(task_id, project_id, title, description, responsible_id, creation_date, deadline, status_id, visibility_id) VALUES " +
                     "('%s', '%s', '%s', '%s', '%s', '%s', '%s', %d, %d)",
@@ -58,15 +47,18 @@ public class TaskController implements CRUDable<Task> {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+         */
     }
 
     @Override
     public void read() {
-        view.printTask(DatabaseController.getTask(model.getID()));
+        // view.printTask(DatabaseController.getTask(model.getID()));
     }
 
     @Override
     public void update(Task newModel) {
+        /*
         newModel.setID(model.getID());
         newModel.setProjectID(model.getProjectID());
         int visibility_id = 1;
@@ -99,12 +91,14 @@ public class TaskController implements CRUDable<Task> {
             throw new RuntimeException(e);
         }
 
+
+         */
         setModel(newModel);
     }
 
     @Override
     public void delete() {
-        model.setVisibility(Visibility.INVISIBLE);
+        model.setActive(Active.INACTIVE);
         update(model);
     }
 }

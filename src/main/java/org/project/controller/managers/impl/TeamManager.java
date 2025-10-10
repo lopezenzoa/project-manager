@@ -1,12 +1,13 @@
-package org.project.controller.managers;
+package org.project.controller.managers.impl;
 
+import org.project.controller.managers.ITeamManager;
 import org.project.model.TeamMember;
 
 import java.util.HashMap;
 import java.util.HashSet;
 
 public class TeamManager implements ITeamManager {
-    private HashMap<Integer, TeamMember> team;
+    private final HashMap<Integer, TeamMember> team;
 
     public TeamManager() {
         this.team = new HashMap<>();
@@ -103,7 +104,7 @@ public class TeamManager implements ITeamManager {
      * @param ID is the ID of the member that want to remove.
      * @return a boolean value depending on if the member could be removed or not.
      * */
-    
+    @Override
     public boolean removeMember(Integer ID) {
         TeamMember toDelete = searchMemberByID(ID);
 

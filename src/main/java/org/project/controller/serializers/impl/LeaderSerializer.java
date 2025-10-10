@@ -1,16 +1,15 @@
-package controller.serializers;
+package org.project.controller.serializers.impl;
 
-import model.Leader;
-import model.TeamMember;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.project.model.Leader;
+import org.project.model.TeamMember;
 
 import java.util.HashSet;
-import java.util.UUID;
 
 public class LeaderSerializer extends UserSerializer {
-    TeamMemberSerializer serializer;
+    private final UserSerializer serializer;
 
     public LeaderSerializer() {
         this.serializer = new TeamMemberSerializer();
@@ -35,7 +34,7 @@ public class LeaderSerializer extends UserSerializer {
             JSONArray dependantsJSON = leaderJSON.getJSONArray("dependants");
             for (int i = 0; i < dependantsJSON.length(); i++) {
                 JSONObject dependantJSON = dependantsJSON.getJSONObject(i);
-                dependants.add(serializer.deserialize(dependantJSON));
+                dependants.add((TeamMember) serializer.deserialize(dependantJSON));
             }
 
             leader.setDependants(dependants);

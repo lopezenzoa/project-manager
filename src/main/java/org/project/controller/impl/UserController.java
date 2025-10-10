@@ -1,12 +1,11 @@
-package org.project.controller;
+package org.project.controller.impl;
 
+import org.project.controller.IUserController;
 import org.project.model.User;
+import org.project.model.enums.Active;
 import org.project.view.IUserView;
-import view.UserView;
 
 import java.sql.*;
-import java.util.HashSet;
-import java.util.UUID;
 
 public abstract class UserController<T extends User> implements IUserController {
     private T model;
@@ -27,6 +26,8 @@ public abstract class UserController<T extends User> implements IUserController 
     public void create() {
         String query = null;
 
+        // Apply strategy pattern
+        /*
         if (model instanceof Admin) {
             query = String.format(
                     "INSERT INTO Admin(admin_id, name, password, email, visibility_id) VALUES " +
@@ -71,20 +72,26 @@ public abstract class UserController<T extends User> implements IUserController 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+         */
     }
 
     @Override
     public void read() {
+        /*
         if (model instanceof Admin)
             view.printUser(DatabaseController.getAdmin(model.getID()));
         else if (model instanceof Leader)
             view.printUser(DatabaseController.getLeader(model.getID()));
         else
             view.printUser(DatabaseController.getTeamMember(model.getID()));
+
+         */
     }
 
     @Override
     public void update(User newModel) {
+        /*
         String query = null;
         newModel.setID(model.getID()); // This line keeps the ID equal for the new model
         int visibility_id = 1;
@@ -132,13 +139,14 @@ public abstract class UserController<T extends User> implements IUserController 
             throw new RuntimeException(e);
         }
 
-        setModel(DatabaseController.getAdmin(newModel.getID()));
+         */
+
+        // setModel(DatabaseController.getAdmin(newModel.getID()));
     }
 
     @Override
     public void delete() {
-        model.setVisibility(Visibility.INVISIBLE);
-
+        model.setActive(Active.INACTIVE);
         update(model);
     }
 
@@ -146,6 +154,7 @@ public abstract class UserController<T extends User> implements IUserController 
      * Auxiliary method to add dependants for Admins and Leaders in the intermediate tables of the 'PM_Java' database.
      * */
     public void addDependants() {
+        /*
         // This collection is used to save every intermediate table insertion separated
         HashSet<String> queries = new HashSet<>();
 
@@ -189,6 +198,8 @@ public abstract class UserController<T extends User> implements IUserController 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+         */
     }
 
     public void print() {
@@ -196,9 +207,12 @@ public abstract class UserController<T extends User> implements IUserController 
     }
 
     public void printDependants() {
+        /*
         if (model instanceof Admin)
             view.printDependants((Admin) model);
         else if (model instanceof Leader)
             view.printDependants((Leader) model);
+
+         */
     }
 }

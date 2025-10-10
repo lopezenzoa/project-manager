@@ -1,15 +1,16 @@
-package controller.serializers;
+package org.project.controller.serializers.impl;
 
-import model.Admin;
-import model.Leader;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.project.model.Admin;
+import org.project.model.Leader;
 
 import java.util.HashSet;
 
 public class AdminSerializer extends UserSerializer {
-    LeaderSerializer serializer;
+    private final UserSerializer serializer;
 
     public AdminSerializer() {
         this.serializer = new LeaderSerializer();
@@ -30,7 +31,7 @@ public class AdminSerializer extends UserSerializer {
             for (int i = 0; i < dependantsJSON.length(); i++) {
                 JSONObject dependantJSON = dependantsJSON.getJSONObject(i);
 
-                dependants.add(serializer.deserialize(dependantJSON));
+                dependants.add((Leader) serializer.deserialize(dependantJSON));
                 admin.setDependants(dependants);
             }
 

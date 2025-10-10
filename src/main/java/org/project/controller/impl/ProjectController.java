@@ -1,9 +1,12 @@
-package org.project.controller;
+package org.project.controller.impl;
 
+import org.project.controller.IProjectController;
 import org.project.model.Project;
 import org.project.model.Task;
-import view.ProjectView;
-import view.TaskView;
+import org.project.model.enums.Active;
+import org.project.model.enums.Status;
+import org.project.view.IProjectView;
+import org.project.view.impl.ProjectView;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,9 +15,9 @@ import java.util.UUID;
 
 public class ProjectController implements IProjectController {
     private Project model;
-    private final ProjectView view;
+    private final IProjectView view;
 
-    public ProjectController(Project model, ProjectView view) {
+    public ProjectController(Project model, IProjectView view) {
         this.model = model;
         this.view = view;
     }
@@ -47,6 +50,7 @@ public class ProjectController implements IProjectController {
 
         createTeam();
 
+        /*
         try {
             Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             Statement statement = connection.createStatement();
@@ -55,20 +59,20 @@ public class ProjectController implements IProjectController {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        */
     }
 
     @Override
     public void read() {
-        view.printProject(DatabaseController.getProject(model.getID()));
+        // view.printProject(DatabaseController.getProject(model.getID()));
     }
 
     @Override
     public void update(Project newModel) {
-        newModel.setID(model.getID());
         int visibility_id = 1;
         int status_id = 1;
 
-        if (newModel.getVisibility().equals(Visibility.INVISIBLE))
+        if (newModel.getActive().equals(Active.ACTIVE))
             visibility_id = 2;
 
         if (newModel.getStatus().equals(Status.FINISHED))
@@ -91,6 +95,7 @@ public class ProjectController implements IProjectController {
 
         createTeam();
 
+        /*
         try {
             Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             Statement statement = connection.createStatement();
@@ -100,12 +105,14 @@ public class ProjectController implements IProjectController {
             throw new RuntimeException(e);
         }
 
+         */
+
         setModel(newModel);
     }
 
     @Override
     public void delete() {
-        model.setVisibility(Visibility.INVISIBLE);
+        model.setActive(Active.ACTIVE);
         update(model);
     }
 
@@ -115,12 +122,15 @@ public class ProjectController implements IProjectController {
      * */
     @Override
     public void createTask(Task task) {
+        /*
         ArrayList<Task> tasks = DatabaseController.getTasks();
 
         if (!tasks.contains(task)) {
             TaskController taskController = new TaskController(task, new TaskView());
             taskController.create();
         }
+
+         */
     }
 
     /**
@@ -130,6 +140,7 @@ public class ProjectController implements IProjectController {
     public void createTeam() {
         StringBuilder query = new StringBuilder("INSERT INTO Team(project_id, team_member_id) VALUES ");
 
+        /*
         Iterator<UUID> iterator = model.getTeamIDs().iterator();
 
         while (iterator.hasNext()) {
@@ -150,5 +161,7 @@ public class ProjectController implements IProjectController {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+         */
     }
 }

@@ -1,40 +1,38 @@
-package controller.serializers;
+package org.project.controller.serializers.impl;
 
-import model.Task;
-import model.enums.Status;
-import model.enums.Visibility;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.project.controller.serializers.ITaskSerializer;
+import org.project.model.Task;
+import org.project.model.TeamMember;
+import org.project.model.enums.Active;
+import org.project.model.enums.Status;
 
-import java.util.UUID;
-
-public class TaskSerializer implements Serializable<Task> {
-    TeamMemberSerializer serializer;
+public class TaskSerializer implements ITaskSerializer {
+    private final UserSerializer serializer;
 
     public TaskSerializer() {
         this.serializer = new TeamMemberSerializer();
     }
 
-    @Override
     /**
      * Creates a new task using as a base a JSONObject.
      * @param taskJSON is the JSONObject used as starting point.
      * */
+    @Override
     public Task deserialize(JSONObject taskJSON) {
-        Task task = new Task();
-
         try {
-            task.setID(taskJSON.getInt("ID"));
-            task.setProjectID(taskJSON.getInt("projectID"));
-            task.setTitle(taskJSON.getString("title"));
-            task.setDescription(taskJSON.getString("description"));
-            task.setResponsible(serializer.deserialize(taskJSON.getJSONObject("responsible")));
-            task.setCreationDate(taskJSON.getString("creationDate"));
-            task.setDeadline(taskJSON.getString("deadline"));
-            task.setStatus(Status.valueOf(taskJSON.getString("status")));
-            task.setVisibility(Visibility.valueOf(taskJSON.getString("visibility")));
+            Integer taskID = taskJSON.getInt("ID");
+            Integer projectID = taskJSON.getInt("projectID");
+            String title = taskJSON.getString("title");
+            String description = taskJSON.getString("description");
+            TeamMember responsible = (TeamMember) serializer.deserialize(taskJSON.getJSONObject("responsible"));
+            String creationDate = taskJSON.getString("creationDate");
+            String deadline = taskJSON.getString("deadline");
+            Status status = Status.valueOf(taskJSON.getString("status"));
+            Active active = Active.valueOf(taskJSON.getString("active"));
 
-            return task;
+            return new Task(taskID, projectID, title, description, responsible, creationDate, deadline, status, active);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -42,11 +40,11 @@ public class TaskSerializer implements Serializable<Task> {
         return null;
     }
 
-    @Override
     /**
      * Serializes the class Task.
      * @return a JSONObject representation of the class.
      * */
+    @Override
     public JSONObject serialize(Task task) {
         JSONObject taskJSON = null;
 
@@ -61,7 +59,7 @@ public class TaskSerializer implements Serializable<Task> {
             taskJSON.put("creationDate", task.getCreationDate());
             taskJSON.put("deadline", task.getDeadline());
             taskJSON.put("status", task.getStatus());
-            taskJSON.put("visibility", task.getVisibility());
+            taskJSON.put("active", task.getActive());
         } catch (JSONException e) {
             e.printStackTrace();
         }

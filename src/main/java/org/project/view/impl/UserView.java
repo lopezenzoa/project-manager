@@ -1,40 +1,38 @@
-package view;
+package org.project.view.impl;
 
-import model.Admin;
-import model.Leader;
-import model.TeamMember;
-import model.User;
+import org.project.model.Admin;
+import org.project.model.Leader;
+import org.project.model.TeamMember;
+import org.project.model.User;
+import org.project.view.IUserView;
 
-import java.util.UUID;
-
-public class UserView {
-    public UserView() {}
-
+public class UserView implements IUserView<User> {
+    @Override
     public void printUser(User user) {
         System.out.println(user);
     }
 
-    public void printDependants(Leader leader) {
+    @Override
+    public void printDependants(User user) {
         System.out.println("Dependants");
-        for (TeamMember dependant : leader.getDependants())
-            System.out.println("  " + dependant.getName() + "\n");
+
+        if (user instanceof Admin)
+            for (Leader dependant : ((Admin) user).getDependants())
+                System.out.println("  " + dependant.getName() + "\n");
+        else
+            for (TeamMember dependant : ((Leader) user).getDependants())
+                System.out.println("  " + dependant.getName() + "\n");
     }
 
-    public void printDependants(Admin admin) {
-        System.out.println("Dependants");
-        for (Leader dependant : admin.getDependants())
-            System.out.println("  " + dependant.getName() + "\n");
-    }
-
-    public void printOngoingProjects(Leader leader) {
+    @Override
+    public void printOngoingProjects(User user) {
         System.out.println("On-Going Projects");
-        for (UUID projectID: leader.getOngoingProjects())
-            System.out.println("  " + projectID + "\n");
-    }
 
-    public void printOngoingProjects(TeamMember member) {
-        System.out.println("On-Going Projects");
-        for (UUID projectID: member.getOngoingProjects())
-            System.out.println("  " + projectID + "\n");
+        if (user instanceof Leader)
+            for (Integer projectID: ((Leader) user).getOngoingProjects())
+                System.out.println("  " + projectID + "\n");
+        else
+            for (Integer projectID: ((TeamMember) user).getOngoingProjects())
+                System.out.println("  " + projectID + "\n");
     }
 }

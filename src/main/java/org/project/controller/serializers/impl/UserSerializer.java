@@ -1,8 +1,9 @@
-package org.project.controller.serializers;
+package org.project.controller.serializers.impl;
 
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.project.controller.serializers.IUserSerializer;
 import org.project.model.User;
 import org.project.model.enums.Active;
 
@@ -13,19 +14,19 @@ public abstract class UserSerializer implements IUserSerializer {
      * */
     @Override
     public User deserialize(JSONObject userJSON) {
-        User user = new User();
-
         try {
-            user.setID(userJSON.getInt("ID"));
-            user.setName(userJSON.getString("name"));
-            user.setEmail(userJSON.getString("email"));
-            user.setPassword(userJSON.getString("password"));
-            user.setActive(Active.valueOf(userJSON.getString("visibility")));
+            Integer ID = userJSON.getInt("ID");
+            String name = userJSON.getString("name");
+            String email = userJSON.getString("email");
+            String password = userJSON.getString("password");
+            Active active = Active.valueOf(userJSON.getString("active"));
+
+            return new User(ID, name, email, password, active);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        return user;
+        return null;
     }
 
     /**

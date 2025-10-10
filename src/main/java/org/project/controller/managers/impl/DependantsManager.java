@@ -1,11 +1,12 @@
-package org.project.controller.managers;
+package org.project.controller.managers.impl;
 
+import org.project.controller.managers.IDependantsManager;
 import org.project.model.User;
 
 import java.util.HashSet;
 
 public class DependantsManager implements IDependantsManager<User> {
-    private HashSet<User> dependants;
+    private final HashSet<User> dependants;
 
     public DependantsManager() {
         this.dependants = new HashSet<>();
