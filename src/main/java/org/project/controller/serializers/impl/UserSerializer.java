@@ -1,13 +1,12 @@
-package controller.serializers;
+package org.project.controller.serializers;
 
-import model.User;
-import model.enums.Visibility;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.project.model.User;
+import org.project.model.enums.Active;
 
-import java.util.UUID;
-
-public abstract class UserSerializer implements Serializable<User> {
+public abstract class UserSerializer implements IUserSerializer {
     /**
      * Creates a new user using as a base a JSONObject.
      * @param userJSON is the JSONObject used as starting point.
@@ -21,7 +20,7 @@ public abstract class UserSerializer implements Serializable<User> {
             user.setName(userJSON.getString("name"));
             user.setEmail(userJSON.getString("email"));
             user.setPassword(userJSON.getString("password"));
-            user.setVisibility(Visibility.valueOf(userJSON.getString("visibility")));
+            user.setActive(Active.valueOf(userJSON.getString("visibility")));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -44,7 +43,7 @@ public abstract class UserSerializer implements Serializable<User> {
             userJSON.put("name", user.getName());
             userJSON.put("email", user.getEmail());
             userJSON.put("password", user.getPassword());
-            userJSON.put("visibility", user.getVisibility());
+            userJSON.put("active", user.getActive());
 
         } catch (JSONException e){
             e.printStackTrace();

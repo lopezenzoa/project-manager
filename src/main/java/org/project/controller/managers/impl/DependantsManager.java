@@ -1,12 +1,11 @@
-package controller.managers;
+package org.project.controller.managers;
 
-import model.User;
+import org.project.model.User;
 
 import java.util.HashSet;
-import java.util.UUID;
 
-public class DependantsManager<T extends User> {
-    private HashSet<T> dependants;
+public class DependantsManager implements IDependantsManager<User> {
+    private HashSet<User> dependants;
 
     public DependantsManager() {
         this.dependants = new HashSet<>();
@@ -17,7 +16,8 @@ public class DependantsManager<T extends User> {
      * @param dependant is the new dependant.
      * @return a boolean value depending on if the dependant could be added or not.
      * */
-    public boolean addDependant(T dependant) {
+    @Override
+    public boolean addDependant(User dependant) {
         if (!dependants.contains(dependant))
             return dependants.add(dependant);
         return false;
@@ -28,7 +28,8 @@ public class DependantsManager<T extends User> {
      * @param dependant is the dependant that want to delete.
      * @return a boolean value depending on if the dependant could be removed or not.
      * */
-    public boolean removeDependant(T dependant) {
+    @Override
+    public boolean removeDependant(User dependant) {
         return dependants.remove(dependant);
     }
 
@@ -37,8 +38,9 @@ public class DependantsManager<T extends User> {
      * @param ID is the dependant that want to delete.
      * @return a boolean value depending on if the dependant could be removed or not.
      * */
-    public boolean removeDependant(UUID ID) {
-        T toDelete = searchDependantByID(ID);
+    @Override
+    public boolean removeDependant(Integer ID) {
+        User toDelete = searchDependantByID(ID);
 
         if (toDelete != null)
             return dependants.remove(toDelete);
@@ -51,8 +53,9 @@ public class DependantsManager<T extends User> {
      * @param ID is the ID of the dependant that want to search.
      * @return a T object if the ID corresponds with a dependant or null otherwise.
      * */
-    public T searchDependantByID(UUID ID) {
-        for (T dependant : dependants)
+    @Override
+    public User searchDependantByID(Integer ID) {
+        for (User dependant : dependants)
             if (dependant.getID().equals(ID))
                 return dependant;
         return null;
@@ -62,10 +65,11 @@ public class DependantsManager<T extends User> {
      * Returns a collection of dependants IDs.
      * @return a HashSet made of dependants IDs.
      * */
-    public HashSet<UUID> getDependantsIDs() {
-        HashSet<UUID> dependantsIDs = new HashSet<>();
+    @Override
+    public HashSet<Integer> getDependantsIDs() {
+        HashSet<Integer> dependantsIDs = new HashSet<>();
 
-        for (T dependant : dependants)
+        for (User dependant : dependants)
             dependantsIDs.add(dependant.getID());
 
         return dependantsIDs;

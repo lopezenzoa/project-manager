@@ -1,12 +1,12 @@
-package controller.managers;
+package org.project.controller.managers;
 
-import model.Task;
+import org.project.model.Task;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.UUID;
 
-public class TaskManager {
+public class TaskManager implements ITaskManager {
     private LinkedList<Task> tasks;
 
     public TaskManager() {
@@ -17,7 +17,8 @@ public class TaskManager {
      * Returns a collection of tasks IDs.
      * @return a HashSet made of tasks IDs.
      * */
-    public HashSet<UUID> getTasksIDs() {
+    @Override
+    public HashSet<Integer> getTasksIDs() {
         HashSet<UUID> taskIDs = new HashSet<>();
 
         for (Task task : tasks)

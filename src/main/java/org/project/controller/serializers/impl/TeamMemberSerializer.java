@@ -1,13 +1,10 @@
-package controller.serializers;
+package org.project.controller.serializers;
 
-import model.TeamMember;
-import model.enums.Role;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashSet;
-import java.util.UUID;
 
 public class TeamMemberSerializer extends UserSerializer {
     public TeamMemberSerializer() {}

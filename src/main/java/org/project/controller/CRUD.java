@@ -1,6 +1,6 @@
-package org.project.model.interfaces;
+package org.project.controller;
 
-public interface CRUDable<T> {
+public interface CRUD<T> {
     void create();
     void read();
     void update(T newModel);

@@ -1,33 +1,25 @@
-package controller;
+package org.project.controller;
 
-import database.DatabaseController;
-import model.Admin;
-import model.Leader;
-import model.TeamMember;
-import model.User;
-import model.enums.Visibility;
-import model.interfaces.CRUDable;
+import org.project.model.User;
+import org.project.view.IUserView;
 import view.UserView;
 
 import java.sql.*;
 import java.util.HashSet;
 import java.util.UUID;
 
-public class UserController implements CRUDable<User> {
-    private User model;
-    private final UserView view;
+public abstract class UserController<T extends User> implements IUserController {
+    private T model;
+    private final IUserView<T> view;
 
-    // Database Connection
-    private final String URL = "jdbc:mysql://localhost:3306/PM_Java";
-    private final String USERNAME = "root";
-    private final String PASSWORD = "password123A$";
-
-    public UserController(User model, UserView view) {
+    public UserController(T model, IUserView<T> view) {
         this.model = model;
         this.view = view;
     }
 
-    private void setModel(User model) {
+    public T getModel() { return model; }
+
+    private void setModel(T model) {
         this.model = model;
     }
 

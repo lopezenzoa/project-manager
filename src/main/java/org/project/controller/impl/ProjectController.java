@@ -1,27 +1,18 @@
-package controller;
+package org.project.controller;
 
-import database.DatabaseController;
-import model.*;
-import model.enums.Status;
-import model.enums.Visibility;
-import model.interfaces.CRUDable;
+import org.project.model.Project;
+import org.project.model.Task;
 import view.ProjectView;
 import view.TaskView;
 
-import javax.xml.crypto.Data;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.UUID;
 
-public class ProjectController implements CRUDable<Project> {
+public class ProjectController implements IProjectController {
     private Project model;
-    private ProjectView view;
-
-    // Database Connection
-    private final String URL = "jdbc:mysql://localhost:3306/PM_Java";
-    private final String USERNAME = "root";
-    private final String PASSWORD = "password123A$";
+    private final ProjectView view;
 
     public ProjectController(Project model, ProjectView view) {
         this.model = model;
@@ -122,6 +113,7 @@ public class ProjectController implements CRUDable<Project> {
      * Creates a task into 'PM_Java' database only if the task didn't exist before.
      * @param task is the object ot type Task which is going to be created.
      * */
+    @Override
     public void createTask(Task task) {
         ArrayList<Task> tasks = DatabaseController.getTasks();
 
@@ -134,6 +126,7 @@ public class ProjectController implements CRUDable<Project> {
     /**
      * Creates an initial team into 'PM_Java' database for the intermediate table 'Team'.
      * */
+    @Override
     public void createTeam() {
         StringBuilder query = new StringBuilder("INSERT INTO Team(project_id, team_member_id) VALUES ");
 
