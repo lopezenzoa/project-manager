@@ -2,7 +2,7 @@ package org.project.model;
 
 
 import org.project.model.enums.Role;
-import org.project.model.enums.Visibility;
+import org.project.model.enums.Active;
 
 import java.util.HashSet;
 
@@ -10,10 +10,8 @@ public class TeamMember extends User {
     private HashSet<Integer> ongoingProjects;
     private Role role;
 
-    public TeamMember() { super(); }
-
-    public TeamMember(Integer ID, String name, String email, String password, Visibility visibility, HashSet<Integer> ongoingProjects, Role role) {
-        super(ID, name, email, password, visibility);
+    public TeamMember(Integer id, String name, String email, String password, Active active, HashSet<Integer> ongoingProjects, Role role) {
+        super(id, name, email, password, active);
         this.ongoingProjects = ongoingProjects;
         this.role = role;
     }

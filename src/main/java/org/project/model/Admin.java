@@ -1,16 +1,14 @@
 package org.project.model;
 
-import org.project.model.enums.Visibility;
+import org.project.model.enums.Active;
 
 import java.util.HashSet;
 
 public class Admin extends User {
     private HashSet<Leader> dependants;
 
-    public Admin() { super(); }
-
-    public Admin(Integer ID, String name, String email, String password, Visibility visibility, HashSet<Leader> dependants) {
-        super(ID, name, email, password, visibility);
+    public Admin(Integer id, String name, String email, String password, Active active, HashSet<Leader> dependants) {
+        super(id, name, email, password, active);
         this.dependants = dependants;
     }
 

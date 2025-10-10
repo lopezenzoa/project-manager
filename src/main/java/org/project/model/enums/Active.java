@@ -1,5 +1,5 @@
 package org.project.model.enums;
 
-public enum Visibility {
-    VISIBLE, INVISIBLE
+public enum Active {
+    ACTIVE, INACTIVE
 }

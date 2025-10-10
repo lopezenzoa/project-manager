@@ -1,7 +1,7 @@
 package org.project.model;
 
 
-import org.project.model.enums.Visibility;
+import org.project.model.enums.Active;
 
 import java.util.HashSet;
 
@@ -9,10 +9,8 @@ public class Leader extends User {
     private HashSet<Integer> ongoingProjects;
     private HashSet<TeamMember> dependants;
 
-    public Leader() { super(); }
-
-    public Leader(Integer ID, String name, String email, String password, Visibility visibility, HashSet<Integer> ongoingProjects, HashSet<TeamMember> dependants) {
-        super(ID, name, email, password, visibility);
+    public Leader(Integer id, String name, String email, String password, Active active, HashSet<Integer> ongoingProjects, HashSet<TeamMember> dependants) {
+        super(id, name, email, password, active);
         this.ongoingProjects = ongoingProjects;
         this.dependants = dependants;
     }
@@ -31,17 +29,5 @@ public class Leader extends User {
 
     public void setDependants(HashSet<TeamMember> dependants) {
         this.dependants = dependants;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() +
-                String.format(
-                        "  ongoingProjects: %s,\n" +
-                        "  dependants: %s\n"
-                        ,
-                        ongoingProjects,
-                        dependants
-                );
     }
 }

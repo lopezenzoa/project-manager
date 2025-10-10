@@ -1,12 +1,12 @@
 package org.project.model;
 
 import org.project.model.enums.Status;
-import org.project.model.enums.Visibility;
+import org.project.model.enums.Active;
 
 import java.util.*;
 
 public class Project {
-    private Integer ID;
+    private final Integer ID;
     private Admin admin;
     private Leader leader;
     private HashMap<Integer, TeamMember> team;
@@ -15,12 +15,9 @@ public class Project {
     private String creationDate;
     private String deadline;
     private Status status;
-    private Visibility visibility;
+    private Active active;
 
-    public Project() {
-    }
-
-    public Project(Integer ID, Admin admin, Leader leader, HashMap<Integer, TeamMember> team, LinkedList<Task> tasks, String name, String creationDate, String deadline, Status status, Visibility visibility) {
+    public Project(Integer ID, Admin admin, Leader leader, HashMap<Integer, TeamMember> team, LinkedList<Task> tasks, String name, String creationDate, String deadline, Status status, Active active) {
         this.ID = ID;
         this.admin = admin;
         this.leader = leader;
@@ -30,15 +27,11 @@ public class Project {
         this.creationDate = creationDate;
         this.deadline = deadline;
         this.status = status;
-        this.visibility = visibility;
+        this.active = active;
     }
 
     public Integer getID() {
         return ID;
-    }
-
-    public void setID(Integer ID) {
-        this.ID = ID;
     }
 
     public Admin getAdmin() {
@@ -105,11 +98,11 @@ public class Project {
         this.status = status;
     }
 
-    public Visibility getVisibility() {
-        return visibility;
+    public Active getActive() {
+        return active;
     }
 
-    public void setVisibility(Visibility visibility) {
-        this.visibility = visibility;
+    public void setActive(Active active) {
+        this.active = active;
     }
 }

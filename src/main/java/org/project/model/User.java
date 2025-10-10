@@ -1,30 +1,24 @@
 package org.project.model;
 
-import org.project.model.enums.Visibility;
+import org.project.model.enums.Active;
 
 public class User {
-    private Integer ID;
+    private final Integer ID;
     private String name;
     private String email;
     private String password;
-    private Visibility visibility;
+    private Active active;
 
-    public User() {}
-
-    public User(Integer ID, String name, String email, String password, Visibility visibility) {
-        this.ID = ID;
+    public User(Integer id, String name, String email, String password, Active active) {
+        this.ID = id;
         this.name = name;
         this.email = email;
         this.password = password;
-        this.visibility = visibility;
+        this.active = active;
     }
 
     public Integer getID() {
         return ID;
-    }
-
-    public void setID(Integer ID) {
-        this.ID = ID;
     }
 
     public String getName() {
@@ -51,11 +45,11 @@ public class User {
         this.password = password;
     }
 
-    public Visibility getVisibility() {
-        return visibility;
+    public Active getActive() {
+        return active;
     }
 
-    public void setVisibility(Visibility visibility) {
-        this.visibility = visibility;
+    public void setActive(Active active) {
+        this.active = active;
     }
 }

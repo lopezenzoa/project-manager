@@ -1,10 +1,10 @@
 package org.project.model;
 
 import org.project.model.enums.Status;
-import org.project.model.enums.Visibility;
+import org.project.model.enums.Active;
 
 public class Task {
-    private Integer ID;
+    private final Integer ID;
     private Integer projectID;
     private String title;
     private String description;
@@ -12,12 +12,9 @@ public class Task {
     private String creationDate;
     private String deadline;
     private Status status;
-    private Visibility visibility;
+    private Active active;
 
-    public Task() {
-    }
-
-    public Task(Integer ID, Integer projectID, String title, String description, TeamMember responsible, String creationDate, String deadline, Status status, Visibility visibility) {
+    public Task(Integer ID, Integer projectID, String title, String description, TeamMember responsible, String creationDate, String deadline, Status status, Active active) {
         this.ID = ID;
         this.projectID = projectID;
         this.title = title;
@@ -26,15 +23,11 @@ public class Task {
         this.creationDate = creationDate;
         this.deadline = deadline;
         this.status = status;
-        this.visibility = visibility;
+        this.active = active;
     }
 
     public Integer getID() {
         return ID;
-    }
-
-    public void setID(Integer ID) {
-        this.ID = ID;
     }
 
     public Integer getProjectID() {
@@ -93,11 +86,11 @@ public class Task {
         this.status = status;
     }
 
-    public Visibility getVisibility() {
-        return visibility;
+    public Active getActive() {
+        return active;
     }
 
-    public void setVisibility(Visibility visibility) {
-        this.visibility = visibility;
+    public void setActive(Active active) {
+        this.active = active;
     }
 }
