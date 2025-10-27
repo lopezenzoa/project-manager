@@ -9,18 +9,17 @@ import org.project.view.IProjectView;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.UUID;
 
-public class ProjectView implements IProjectView {
+public  class ProjectView implements IProjectView {
     @Override
     public void printProject(Project project) {
         System.out.println(project);
     }
 
     @Override
-    public void printTeamMembers(HashMap<UUID, TeamMember> team) {
+    public void printTeamMembers(HashMap<Integer, TeamMember> team) {
         System.out.println("Team");
-        for (Map.Entry<UUID, TeamMember> entry : team.entrySet())
+        for (Map.Entry<Integer, TeamMember> entry : team.entrySet())
             System.out.println("  " + entry.getValue().getName() + " - " + entry.getValue().getRole() + "\n");
     }
 

@@ -6,11 +6,10 @@ import org.project.model.TeamMember;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.UUID;
 
 public interface IProjectView {
     void printProject(Project project);
-    void printTeamMembers(HashMap<UUID, TeamMember> team);
+    void printTeamMembers(HashMap<Integer, TeamMember> team);
     void printPendingTasks(LinkedList<Task> tasks);
     void printFinishedTasks(LinkedList<Task> tasks);
 }
