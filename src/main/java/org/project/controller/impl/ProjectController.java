@@ -3,15 +3,7 @@ package org.project.controller.impl;
 import org.project.controller.IProjectController;
 import org.project.model.Project;
 import org.project.model.Task;
-import org.project.model.enums.Active;
-import org.project.model.enums.Status;
 import org.project.view.IProjectView;
-import org.project.view.impl.ProjectView;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.UUID;
 
 public class ProjectController implements IProjectController {
     private Project model;
@@ -32,88 +24,18 @@ public class ProjectController implements IProjectController {
 
     @Override
     public void create() {
-        String query = String.format(
-                "INSERT INTO Project(project_id, admin_id, leader_id, name, creation_date, deadline, status_id, visibility_id) VALUES " +
-                        "('%s', '%s', '%s', '%s', '%s', '%s', %d, %d);",
-                model.getID().toString(),
-                model.getAdmin().getID().toString(),
-                model.getLeader().getID().toString(),
-                model.getName(),
-                model.getCreationDate(),
-                model.getDeadline(),
-                1, // PENDING
-                1 // VISIBLE
-        );
-
-        for (Task task : model.getTasks())
-            createTask(task);
-
-        createTeam();
-
-        /*
-        try {
-            Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(query);
-            connection.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        */
     }
 
     @Override
     public void read() {
-        // view.printProject(DatabaseController.getProject(model.getID()));
     }
 
     @Override
     public void update(Project newModel) {
-        int visibility_id = 1;
-        int status_id = 1;
-
-        if (newModel.getActive().equals(Active.ACTIVE))
-            visibility_id = 2;
-
-        if (newModel.getStatus().equals(Status.FINISHED))
-            status_id = 2;
-
-        String query = String.format(
-                "UPDATE Project SET admin_id = '%s', leader_id = '%s', name = '%s', deadline = '%s', status_id = %d, visibility_id = %d " +
-                        "WHERE project_id = '%s';",
-                newModel.getAdmin().getID(),
-                newModel.getLeader().getID(),
-                newModel.getName(),
-                newModel.getDeadline(),
-                status_id,
-                visibility_id,
-                newModel.getID()
-        );
-
-        for (Task task : newModel.getTasks())
-            createTask(task);
-
-        createTeam();
-
-        /*
-        try {
-            Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(query);
-            connection.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-         */
-
-        setModel(newModel);
     }
 
     @Override
     public void delete() {
-        model.setActive(Active.ACTIVE);
-        update(model);
     }
 
     /**
@@ -122,15 +44,6 @@ public class ProjectController implements IProjectController {
      * */
     @Override
     public void createTask(Task task) {
-        /*
-        ArrayList<Task> tasks = DatabaseController.getTasks();
-
-        if (!tasks.contains(task)) {
-            TaskController taskController = new TaskController(task, new TaskView());
-            taskController.create();
-        }
-
-         */
     }
 
     /**
@@ -138,30 +51,21 @@ public class ProjectController implements IProjectController {
      * */
     @Override
     public void createTeam() {
-        StringBuilder query = new StringBuilder("INSERT INTO Team(project_id, team_member_id) VALUES ");
+    }
 
-        /*
-        Iterator<UUID> iterator = model.getTeamIDs().iterator();
+    public void print() {
+        view.printProject(model);
+    }
 
-        while (iterator.hasNext()) {
-            UUID currentID = iterator.next();
+    public void printPendingTasks() {
+        view.printPendingTasks(model.getTasks());
+    }
 
-            // This conditional may be redundant, but is crucial to set the query correctly
-            if (!iterator.hasNext())
-                query.append(String.format("('%s', '%s');", model.getID(), currentID));
-            else
-                query.append(String.format("('%s', '%s'), ", model.getID(), currentID));
-        }
+    public void printFinishedTasks() {
+        view.printFinishedTasks(model.getTasks());
+    }
 
-        try {
-            Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(String.valueOf(query));
-            connection.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-         */
+    public void printTeam() {
+        view.printTeamMembers(model.getTeam());
     }
 }
