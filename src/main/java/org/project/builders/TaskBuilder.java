@@ -2,27 +2,25 @@ package org.project.builders;
 
 import org.project.model.Task;
 import org.project.model.TeamMember;
-import org.project.model.enums.Active;
 import org.project.model.enums.Status;
 
 public class TaskBuilder {
-    private Integer ID;
-    private Integer projectID;
+    private Integer taskId;
+    private Integer projectId;
     private String title;
     private String description;
     private TeamMember responsible;
     private String creationDate;
     private String deadline;
     private Status status;
-    private Active active;
 
-    public TaskBuilder setID(Integer ID) {
-        this.ID = ID;
+    public TaskBuilder setTaskId(Integer taskId) {
+        this.taskId = taskId;
         return this;
     }
 
-    public TaskBuilder setProjectID(Integer projectID) {
-        this.projectID = projectID;
+    public TaskBuilder setProjectId(Integer projectId) {
+        this.projectId = projectId;
         return this;
     }
 
@@ -56,12 +54,7 @@ public class TaskBuilder {
         return this;
     }
 
-    public TaskBuilder setActive(Active active) {
-        this.active = active;
-        return this;
-    }
-
     public Task build() {
-        return new Task(ID, projectID, title, description, responsible, creationDate, deadline, status, active);
+        return new Task(taskId, projectId, title, description, responsible, creationDate, deadline, status);
     }
 }

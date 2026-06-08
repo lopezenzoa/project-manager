@@ -2,21 +2,20 @@ package org.project.builders;
 
 import org.project.model.Leader;
 import org.project.model.TeamMember;
-import org.project.model.enums.Active;
 
 import java.util.HashSet;
 
 public class LeaderBuilder {
-    private Integer ID;
+    private Integer leaderId;
     private String name;
     private String email;
     private String password;
-    private Active active;
+    private Boolean isActive;
     private HashSet<Integer> ongoingProjects;
     private HashSet<TeamMember> dependants;
 
-    public LeaderBuilder setID(Integer ID) {
-        this.ID = ID;
+    public LeaderBuilder setLeaderId(Integer leaderId) {
+        this.leaderId = leaderId;
         return this;
     }
 
@@ -35,8 +34,8 @@ public class LeaderBuilder {
         return this;
     }
 
-    public LeaderBuilder setActive(Active active) {
-        this.active = active;
+    public LeaderBuilder setIsActive(Boolean isActive) {
+        this.isActive = isActive;
         return this;
     }
 
@@ -51,6 +50,6 @@ public class LeaderBuilder {
     }
 
     public Leader build() {
-        return new Leader(ID, name, email, password, active, ongoingProjects, dependants);
+        return new Leader(leaderId, name, email, password, isActive, ongoingProjects, dependants);
     }
 }

@@ -1,22 +1,21 @@
 package org.project.builders;
 
 import org.project.model.TeamMember;
-import org.project.model.enums.Active;
 import org.project.model.enums.Role;
 
 import java.util.HashSet;
 
 public class TeamMemberBuilder {
-    private Integer ID;
+    private Integer teamMemberId;
     private String name;
     private String email;
     private String password;
-    private Active active;
+    private Boolean isActive;
     private HashSet<Integer> ongoingProjects;
     private Role role;
 
-    public TeamMemberBuilder setID(Integer ID) {
-        this.ID = ID;
+    public TeamMemberBuilder setTeamMemberId(Integer teamMemberId) {
+        this.teamMemberId = teamMemberId;
         return this;
     }
 
@@ -35,8 +34,8 @@ public class TeamMemberBuilder {
         return this;
     }
 
-    public TeamMemberBuilder setActive(Active active) {
-        this.active = active;
+    public TeamMemberBuilder setIsActive(Boolean isActive) {
+        this.isActive = isActive;
         return this;
     }
 
@@ -51,6 +50,6 @@ public class TeamMemberBuilder {
     }
 
     public TeamMember build() {
-        return new TeamMember(ID, name, email, password, active, ongoingProjects, role);
+        return new TeamMember(teamMemberId, name, email, password, isActive, ongoingProjects, role);
     }
 }

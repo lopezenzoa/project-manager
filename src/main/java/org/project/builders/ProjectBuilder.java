@@ -1,14 +1,13 @@
 package org.project.builders;
 
 import org.project.model.*;
-import org.project.model.enums.Active;
 import org.project.model.enums.Status;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 
 public class ProjectBuilder {
-    private Integer ID;
+    private Integer projectId;
     private Admin admin;
     private Leader leader;
     private HashMap<Integer, TeamMember> team;
@@ -17,10 +16,10 @@ public class ProjectBuilder {
     private String creationDate;
     private String deadline;
     private Status status;
-    private Active active;
+    private Boolean isActive;
 
-    public ProjectBuilder setID(Integer ID) {
-        this.ID = ID;
+    public ProjectBuilder setProjectId(Integer projectId) {
+        this.projectId = projectId;
         return this;
     }
 
@@ -64,12 +63,12 @@ public class ProjectBuilder {
         return this;
     }
 
-    public ProjectBuilder setActive(Active active) {
-        this.active = active;
+    public ProjectBuilder setIsActive(Boolean isActive) {
+        this.isActive = isActive;
         return this;
     }
 
     public Project build() {
-        return new Project(ID, admin, leader, team, tasks, name, creationDate, deadline, status, active);
+        return new Project(projectId, admin, leader, team, tasks, name, creationDate, deadline, status, isActive);
     }
 }

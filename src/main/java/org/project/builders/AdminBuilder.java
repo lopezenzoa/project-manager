@@ -2,20 +2,19 @@ package org.project.builders;
 
 import org.project.model.Admin;
 import org.project.model.Leader;
-import org.project.model.enums.Active;
 
 import java.util.HashSet;
 
 public class AdminBuilder {
-    private Integer ID;
+    private Integer adminId;
     private String name;
     private String email;
     private String password;
-    private Active active;
+    private Boolean isActive;
     private HashSet<Leader> dependants;
 
-    public AdminBuilder setID(Integer ID) {
-        this.ID = ID;
+    public AdminBuilder setAdminId(Integer adminId) {
+        this.adminId = adminId;
         return this;
     }
 
@@ -34,8 +33,8 @@ public class AdminBuilder {
         return this;
     }
 
-    public AdminBuilder setActive(Active active) {
-        this.active = active;
+    public AdminBuilder setIsActive(Boolean isActive) {
+        this.isActive = isActive;
         return this;
     }
 
@@ -45,6 +44,6 @@ public class AdminBuilder {
     }
 
     public Admin build() {
-        return new Admin(ID, name, email, password, active, dependants);
+        return new Admin(adminId, name, email, password, isActive, dependants);
     }
 }
