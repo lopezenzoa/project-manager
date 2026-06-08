@@ -15,7 +15,6 @@ public class ProjectBuilder {
     private String name;
     private String creationDate;
     private String deadline;
-    private Status status;
     private Boolean isActive;
 
     public ProjectBuilder setProjectId(Integer projectId) {
@@ -58,17 +57,12 @@ public class ProjectBuilder {
         return this;
     }
 
-    public ProjectBuilder setStatus(Status status) {
-        this.status = status;
-        return this;
-    }
-
     public ProjectBuilder setIsActive(Boolean isActive) {
         this.isActive = isActive;
         return this;
     }
 
     public Project build() {
-        return new Project(projectId, admin, leader, team, tasks, name, creationDate, deadline, status, isActive);
+        return new Project(projectId, admin, leader, team, tasks, name, creationDate, deadline, isActive);
     }
 }

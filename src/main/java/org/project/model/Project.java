@@ -19,10 +19,9 @@ public class Project {
     private String name;
     private String creationDate;
     private String deadline;
-    private Status status;
     private Boolean isActive;
 
-    public Project(Integer projectId, Admin admin, Leader leader, HashMap<Integer, TeamMember> team, LinkedList<Task> tasks, String name, String creationDate, String deadline, Status status, Boolean isActive) {
+    public Project(Integer projectId, Admin admin, Leader leader, HashMap<Integer, TeamMember> team, LinkedList<Task> tasks, String name, String creationDate, String deadline, Boolean isActive) {
         this.projectId = projectId;
         this.admin = admin;
         this.leader = leader;
@@ -31,7 +30,6 @@ public class Project {
         this.name = name;
         this.creationDate = creationDate;
         this.deadline = deadline;
-        this.status = status;
         this.isActive = isActive;
     }
 }
