@@ -1,6 +1,7 @@
-package org.project.controller.serializers.impl;
+package org.project.serializers;
 
 
+import lombok.AllArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,12 +10,9 @@ import org.project.model.Leader;
 
 import java.util.HashSet;
 
+@AllArgsConstructor
 public class AdminSerializer extends UserSerializer {
-    private final UserSerializer serializer;
-
-    public AdminSerializer() {
-        this.serializer = new LeaderSerializer();
-    }
+    private final UserSerializer leaderSerializer;
 
     /**
      * Creates a new admin using as a base a JSONObject.
@@ -24,14 +22,13 @@ public class AdminSerializer extends UserSerializer {
         HashSet<Leader> dependants = new HashSet<>();
 
         try {
-            // builds the basic info for the admin
             Admin admin = (Admin) super.deserialize(adminJSON);
 
             JSONArray dependantsJSON = adminJSON.getJSONArray("dependants");
             for (int i = 0; i < dependantsJSON.length(); i++) {
                 JSONObject dependantJSON = dependantsJSON.getJSONObject(i);
 
-                dependants.add((Leader) serializer.deserialize(dependantJSON));
+                dependants.add((Leader) leaderSerializer.deserialize(dependantJSON));
                 admin.setDependants(dependants);
             }
 
@@ -55,7 +52,7 @@ public class AdminSerializer extends UserSerializer {
             JSONArray dependantsJSON = new JSONArray();
 
             for(Leader dependant : admin.getDependants()) {
-                dependantsJSON.put(serializer.serialize(dependant));
+                dependantsJSON.put(leaderSerializer.serialize(dependant));
             }
 
             adminJSON.put("dependants", dependantsJSON);

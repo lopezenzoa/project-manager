@@ -1,28 +1,21 @@
-package org.project.controller.serializers.impl;
+package org.project.serializers;
 
+import lombok.AllArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.project.builders.ProjectBuilder;
-import org.project.controller.serializers.IProjectSerializer;
-import org.project.controller.serializers.ITaskSerializer;
-import org.project.controller.serializers.IUserSerializer;
 import org.project.model.*;
-import org.project.model.enums.Active;
-import org.project.model.enums.Status;
+import org.project.serializers.interfaces.Serializable;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class ProjectSerializer implements IProjectSerializer {
-    private final IUserSerializer userSerializer;
-    private final ITaskSerializer taskSerializer;
-
-    public ProjectSerializer(IUserSerializer userSerializer, ITaskSerializer taskSerializer) {
-        this.userSerializer = userSerializer;
-        this.taskSerializer = taskSerializer;
-    }
+@AllArgsConstructor
+public class ProjectSerializer implements Serializable<Project> {
+    private final UserSerializer userSerializer;
+    private final TaskSerializer taskSerializer;
 
     /**
      * Creates a new project using as a base a JSONObject.
@@ -34,14 +27,14 @@ public class ProjectSerializer implements IProjectSerializer {
         LinkedList<Task> tasks = new LinkedList<>();
 
         try {
-            Integer projectID = projectJSON.getInt("ID");
+            Integer projectId = projectJSON.getInt("projectId");
             Admin admin = (Admin) userSerializer.deserialize(projectJSON.getJSONObject("admin"));
             Leader leader = (Leader) userSerializer.deserialize(projectJSON.getJSONObject("leader"));
 
             JSONArray teamJSON = projectJSON.getJSONArray("team");
             for (int i = 0; i < teamJSON.length(); i++) {
                 JSONObject memberJSON = teamJSON.getJSONObject(i);
-                Integer memberID = memberJSON.getInt("ID");
+                Integer memberID = memberJSON.getInt("userId");
                 TeamMember member = (TeamMember) userSerializer.deserialize(memberJSON.getJSONObject("member"));
 
                 team.put(memberID, member);
@@ -56,11 +49,10 @@ public class ProjectSerializer implements IProjectSerializer {
             String name = projectJSON.getString("name");
             String creationDate = projectJSON.getString("creationDate");
             String deadline = projectJSON.getString("deadline");
-            Status status = Status.valueOf(projectJSON.getString("status"));
-            Active active = Active.valueOf(projectJSON.getString("active"));
+            Boolean isActive = projectJSON.getBoolean("isActive");
 
             return new ProjectBuilder()
-                    .setID(projectID)
+                    .setProjectId(projectId)
                     .setAdmin(admin)
                     .setLeader(leader)
                     .setTeam(team)
@@ -68,8 +60,7 @@ public class ProjectSerializer implements IProjectSerializer {
                     .setName(name)
                     .setCreationDate(creationDate)
                     .setDeadline(deadline)
-                    .setStatus(status)
-                    .setActive(active)
+                    .setIsActive(isActive)
                     .build();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -78,11 +69,11 @@ public class ProjectSerializer implements IProjectSerializer {
         return null;
     }
 
-    @Override
     /**
      * Serializes the class Project.
      * @return a JSONObject representation of the class.
      * */
+    @Override
     public JSONObject serialize(Project project) {
         JSONObject projectJSON = null;
 
@@ -91,13 +82,13 @@ public class ProjectSerializer implements IProjectSerializer {
             JSONArray teamJSON = new JSONArray();
             JSONArray tasksJSON = new JSONArray();
 
-            projectJSON.put("ID", project.getID());
+            projectJSON.put("projectId", project.getProjectId());
             projectJSON.put("admin", userSerializer.serialize(project.getAdmin()));
             projectJSON.put("leader", userSerializer.serialize(project.getLeader()));
 
             JSONObject memberJSON = new JSONObject();
             for (Map.Entry<Integer, TeamMember> entry : project.getTeam().entrySet()) {
-                memberJSON.put("ID", entry.getKey());
+                memberJSON.put("userId", entry.getKey());
                 memberJSON.put("member", userSerializer.serialize(entry.getValue()));
 
                 teamJSON.put(memberJSON);
@@ -112,8 +103,7 @@ public class ProjectSerializer implements IProjectSerializer {
             projectJSON.put("name", project.getName());
             projectJSON.put("creationDate", project.getCreationDate());
             projectJSON.put("deadline", project.getDeadline());
-            projectJSON.put("status", project.getStatus());
-            projectJSON.put("active", project.getActive());
+            projectJSON.put("isActive", project.getIsActive());
         } catch (JSONException e) {
             e.printStackTrace();
         }

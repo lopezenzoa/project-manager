@@ -1,19 +1,17 @@
-package org.project.controller.serializers.impl;
+package org.project.serializers;
 
+import lombok.AllArgsConstructor;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.project.controller.serializers.ITaskSerializer;
+import org.project.builders.TaskBuilder;
 import org.project.model.Task;
 import org.project.model.TeamMember;
-import org.project.model.enums.Active;
 import org.project.model.enums.Status;
+import org.project.serializers.interfaces.Serializable;
 
-public class TaskSerializer implements ITaskSerializer {
-    private final UserSerializer serializer;
-
-    public TaskSerializer() {
-        this.serializer = new TeamMemberSerializer();
-    }
+@AllArgsConstructor
+public class TaskSerializer implements Serializable<Task> {
+    private final UserSerializer responsibleSerializer;
 
     /**
      * Creates a new task using as a base a JSONObject.
@@ -22,17 +20,25 @@ public class TaskSerializer implements ITaskSerializer {
     @Override
     public Task deserialize(JSONObject taskJSON) {
         try {
-            Integer taskID = taskJSON.getInt("ID");
-            Integer projectID = taskJSON.getInt("projectID");
+            Integer taskId = taskJSON.getInt("taskId");
+            Integer projectId = taskJSON.getInt("projectID");
             String title = taskJSON.getString("title");
             String description = taskJSON.getString("description");
-            TeamMember responsible = (TeamMember) serializer.deserialize(taskJSON.getJSONObject("responsible"));
+            TeamMember responsible = (TeamMember) responsibleSerializer.deserialize(taskJSON.getJSONObject("responsible"));
             String creationDate = taskJSON.getString("creationDate");
             String deadline = taskJSON.getString("deadline");
             Status status = Status.valueOf(taskJSON.getString("status"));
-            Active active = Active.valueOf(taskJSON.getString("active"));
 
-            return new Task(taskID, projectID, title, description, responsible, creationDate, deadline, status, active);
+            return new TaskBuilder()
+                    .setTaskId(taskId)
+                    .setProjectId(projectId)
+                    .setTitle(title)
+                    .setDescription(description)
+                    .setResponsible(responsible)
+                    .setCreationDate(creationDate)
+                    .setDeadline(deadline)
+                    .setStatus(status)
+                    .build();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -51,15 +57,14 @@ public class TaskSerializer implements ITaskSerializer {
         try {
             taskJSON = new JSONObject();
 
-            taskJSON.put("ID", task.getID());
-            taskJSON.put("projectID", task.getProjectID());
+            taskJSON.put("taskId", task.getTaskId());
+            taskJSON.put("projectId", task.getProjectId());
             taskJSON.put("title", task.getTitle());
             taskJSON.put("description", task.getDescription());
-            taskJSON.put("responsible", serializer.serialize(task.getResponsible()));
+            taskJSON.put("responsible", responsibleSerializer.serialize(task.getResponsible()));
             taskJSON.put("creationDate", task.getCreationDate());
             taskJSON.put("deadline", task.getDeadline());
             taskJSON.put("status", task.getStatus());
-            taskJSON.put("active", task.getActive());
         } catch (JSONException e) {
             e.printStackTrace();
         }

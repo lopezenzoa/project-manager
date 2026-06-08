@@ -1,13 +1,12 @@
-package org.project.controller.serializers.impl;
+package org.project.serializers;
 
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.project.controller.serializers.IUserSerializer;
 import org.project.model.User;
-import org.project.model.enums.Active;
+import org.project.serializers.interfaces.Serializable;
 
-public abstract class UserSerializer implements IUserSerializer {
+public abstract class UserSerializer implements Serializable<User> {
     /**
      * Creates a new user using as a base a JSONObject.
      * @param userJSON is the JSONObject used as starting point.
@@ -15,13 +14,13 @@ public abstract class UserSerializer implements IUserSerializer {
     @Override
     public User deserialize(JSONObject userJSON) {
         try {
-            Integer ID = userJSON.getInt("ID");
+            Integer ID = userJSON.getInt("userId");
             String name = userJSON.getString("name");
             String email = userJSON.getString("email");
             String password = userJSON.getString("password");
-            Active active = Active.valueOf(userJSON.getString("active"));
+            Boolean isActive = userJSON.getBoolean("isActive");
 
-            return new User(ID, name, email, password, active);
+            return new User(ID, name, email, password, isActive);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -40,11 +39,11 @@ public abstract class UserSerializer implements IUserSerializer {
         try {
             userJSON = new JSONObject();
 
-            userJSON.put("ID", user.getID());
+            userJSON.put("userId", user.getUserId());
             userJSON.put("name", user.getName());
             userJSON.put("email", user.getEmail());
             userJSON.put("password", user.getPassword());
-            userJSON.put("active", user.getActive());
+            userJSON.put("isActive", user.getIsActive());
 
         } catch (JSONException e){
             e.printStackTrace();

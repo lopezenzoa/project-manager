@@ -1,5 +1,6 @@
-package org.project.controller.serializers.impl;
+package org.project.serializers;
 
+import lombok.AllArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -8,12 +9,9 @@ import org.project.model.TeamMember;
 
 import java.util.HashSet;
 
+@AllArgsConstructor
 public class LeaderSerializer extends UserSerializer {
-    private final UserSerializer serializer;
-
-    public LeaderSerializer() {
-        this.serializer = new TeamMemberSerializer();
-    }
+    private final UserSerializer teamMemberSerializer;
 
     /**
      * Creates a new leader using as a base a JSONObject.
@@ -29,12 +27,12 @@ public class LeaderSerializer extends UserSerializer {
             for (Object projectIDJSON : leaderJSON.getJSONArray("ongoingProjects"))
                 ongoingProjects.add((Integer) projectIDJSON);
 
-            leader.setOngoingProjects(ongoingProjects);
+            leader.setOngoingProjectsIds(ongoingProjects);
 
             JSONArray dependantsJSON = leaderJSON.getJSONArray("dependants");
             for (int i = 0; i < dependantsJSON.length(); i++) {
                 JSONObject dependantJSON = dependantsJSON.getJSONObject(i);
-                dependants.add((TeamMember) serializer.deserialize(dependantJSON));
+                dependants.add((TeamMember) teamMemberSerializer.deserialize(dependantJSON));
             }
 
             leader.setDependants(dependants);
@@ -57,14 +55,14 @@ public class LeaderSerializer extends UserSerializer {
             JSONArray ongoingProjectsJSON = new JSONArray();
             JSONArray dependantsJSON = new JSONArray();
 
-            for (Integer projectID : leader.getOngoingProjects()){
+            for (Integer projectID : leader.getOngoingProjectsIds()){
                 ongoingProjectsJSON.put(projectID);
             }
 
             leaderJSON.put("ongoingProjects", ongoingProjectsJSON);
 
             for(TeamMember dependant : leader.getDependants()){
-                dependantsJSON.put(serializer.serialize(dependant));
+                dependantsJSON.put(teamMemberSerializer.serialize(dependant));
             }
 
             leaderJSON.put("dependants", dependantsJSON);

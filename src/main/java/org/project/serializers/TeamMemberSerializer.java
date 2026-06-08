@@ -1,5 +1,6 @@
-package org.project.controller.serializers.impl;
+package org.project.serializers;
 
+import lombok.AllArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,8 +10,8 @@ import java.util.HashSet;
 import org.project.model.TeamMember;
 import org.project.model.enums.Role;
 
+@AllArgsConstructor
 public class TeamMemberSerializer extends UserSerializer {
-    public TeamMemberSerializer() {}
 
     /**
      * Creates a new team member using as a base a JSONObject.
@@ -25,7 +26,7 @@ public class TeamMemberSerializer extends UserSerializer {
             for (Object projectIDJSON : teamMemberJSON.getJSONArray("ongoingProjects"))
                 ongoingProjects.add((Integer) projectIDJSON);
 
-            teamMember.setOngoingProjects(ongoingProjects);
+            teamMember.setOngoingProjectsIds(ongoingProjects);
             teamMember.setRole(Role.valueOf(teamMemberJSON.getString("role")));
 
             return teamMember;
@@ -47,10 +48,10 @@ public class TeamMemberSerializer extends UserSerializer {
             memberJSON = super.serialize(teamMember);
             JSONArray ongoingProjectsJSON = new JSONArray();
 
-            for (Integer projectID : teamMember.getOngoingProjects())
+            for (Integer projectID : teamMember.getOngoingProjectsIds())
                 ongoingProjectsJSON.put(projectID);
 
-            memberJSON.put("ongoingProjects", teamMember.getOngoingProjects());
+            memberJSON.put("ongoingProjects", teamMember.getOngoingProjectsIds());
             memberJSON.put("role", teamMember.getRole());
         } catch (JSONException e) {
             e.printStackTrace();
