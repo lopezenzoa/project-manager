@@ -1,16 +1,13 @@
-package org.project.view.impl;
+package org.project.view;
 
 import org.project.model.Task;
 import org.project.model.TeamMember;
-import org.project.view.ITaskView;
 
-public class TaskView implements ITaskView {
-    @Override
+public class TaskView {
     public void printTask(Task task) {
         System.out.println(task);
     }
 
-    @Override
     public void printResponsible(TeamMember responsible) {
         System.out.println(responsible);
     }

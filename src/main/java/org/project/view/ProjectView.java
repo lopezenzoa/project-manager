@@ -1,30 +1,26 @@
-package org.project.view.impl;
+package org.project.view;
 
 import org.project.model.Project;
 import org.project.model.Task;
 import org.project.model.TeamMember;
 import org.project.model.enums.Status;
-import org.project.view.IProjectView;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.UUID;
 
-public class ProjectView implements IProjectView {
-    @Override
+public class ProjectView {
     public void printProject(Project project) {
         System.out.println(project);
     }
 
-    @Override
     public void printTeamMembers(HashMap<UUID, TeamMember> team) {
         System.out.println("Team");
         for (Map.Entry<UUID, TeamMember> entry : team.entrySet())
             System.out.println("  " + entry.getValue().getName() + " - " + entry.getValue().getRole() + "\n");
     }
 
-    @Override
     public void printPendingTasks(LinkedList<Task> tasks) {
         System.out.println("Pending Tasks");
         for (Task task : tasks)
@@ -32,7 +28,6 @@ public class ProjectView implements IProjectView {
                 System.out.println(task);
     }
 
-    @Override
     public void printFinishedTasks(LinkedList<Task> tasks) {
         System.out.println("Finished Tasks");
         for (Task task : tasks)
