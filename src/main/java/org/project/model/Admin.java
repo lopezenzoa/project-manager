@@ -1,22 +1,17 @@
 package org.project.model;
 
-import org.project.model.enums.Active;
+import lombok.*;
 
 import java.util.HashSet;
 
+@Getter
+@Setter
+@ToString
 public class Admin extends User {
     private HashSet<Leader> dependants;
 
-    public Admin(Integer id, String name, String email, String password, Active active, HashSet<Leader> dependants) {
-        super(id, name, email, password, active);
-        this.dependants = dependants;
-    }
-
-    public HashSet<Leader> getDependants() {
-        return dependants;
-    }
-
-    public void setDependants(HashSet<Leader> dependants) {
+    public Admin(Integer userId, String name, String email, String password, Boolean isActive, HashSet<Leader> dependants) {
+        super(userId, name, email, password, isActive);
         this.dependants = dependants;
     }
 }
