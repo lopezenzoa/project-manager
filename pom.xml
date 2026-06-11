@@ -17,12 +17,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.eclipse.jdt</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.3.0-v20070606-0010</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>4.0.0-M1</version>
