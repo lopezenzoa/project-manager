@@ -18,7 +18,7 @@ public class TaskManager {
         HashSet<Integer> taskIds = new HashSet<>();
 
         for (Task task : tasks)
-            taskIds.add(task.getTaskId());
+            taskIds.add(task.getId());
 
         return taskIds;
     }
@@ -30,7 +30,7 @@ public class TaskManager {
      * */
     public Task searchTaskById(Integer Id) {
         for (Task task : tasks)
-            if (task.getTaskId().equals(Id))
+            if (task.getId().equals(Id))
                 return task;
         return null;
     }

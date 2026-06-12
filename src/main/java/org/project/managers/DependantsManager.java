@@ -50,7 +50,7 @@ public class DependantsManager {
      * */
     public User searchDependantByID(Integer ID) {
         for (User dependant : dependants)
-            if (dependant.getUserId().equals(ID))
+            if (dependant.getId().equals(ID))
                 return dependant;
         return null;
     }
@@ -63,7 +63,7 @@ public class DependantsManager {
         HashSet<Integer> dependantsIDs = new HashSet<>();
 
         for (User dependant : dependants)
-            dependantsIDs.add(dependant.getUserId());
+            dependantsIDs.add(dependant.getId());
 
         return dependantsIDs;
     }

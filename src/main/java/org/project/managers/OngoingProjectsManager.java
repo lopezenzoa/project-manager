@@ -26,6 +26,6 @@ public class OngoingProjectsManager {
      * @return a boolean value depending on if the project could be added or not.
      * */
     public boolean removeOngoingProject(Project project) {
-        return ongoingProjects.remove(project.getProjectId());
+        return ongoingProjects.remove(project.getId());
     }
 }
