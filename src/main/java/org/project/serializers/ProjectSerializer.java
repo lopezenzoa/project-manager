@@ -8,6 +8,7 @@ import org.project.builders.ProjectBuilder;
 import org.project.model.*;
 import org.project.serializers.interfaces.Serializable;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -23,19 +24,17 @@ public class ProjectSerializer implements Serializable<Project> {
      * */
     @Override
     public Project deserialize(JSONObject projectJSON) {
-        HashMap<Integer, TeamMember> team = new HashMap<>();
+        HashMap<Integer, User> team = new HashMap<>();
         LinkedList<Task> tasks = new LinkedList<>();
 
         try {
-            Integer projectId = projectJSON.getInt("projectId");
-            Admin admin = (Admin) userSerializer.deserialize(projectJSON.getJSONObject("admin"));
-            Leader leader = (Leader) userSerializer.deserialize(projectJSON.getJSONObject("leader"));
+            Integer id = projectJSON.getInt("id");
 
             JSONArray teamJSON = projectJSON.getJSONArray("team");
             for (int i = 0; i < teamJSON.length(); i++) {
                 JSONObject memberJSON = teamJSON.getJSONObject(i);
-                Integer memberID = memberJSON.getInt("userId");
-                TeamMember member = (TeamMember) userSerializer.deserialize(memberJSON.getJSONObject("member"));
+                Integer memberID = memberJSON.getInt("id");
+                User member = userSerializer.deserialize(memberJSON.getJSONObject("member"));
 
                 team.put(memberID, member);
             }
@@ -47,20 +46,18 @@ public class ProjectSerializer implements Serializable<Project> {
             }
 
             String name = projectJSON.getString("name");
-            String creationDate = projectJSON.getString("creationDate");
-            String deadline = projectJSON.getString("deadline");
+            LocalDate creationDate = LocalDate.parse(projectJSON.getString("creationDate"));
+            LocalDate expectedDeadline = LocalDate.parse(projectJSON.getString("expectedDeadline"));
             Boolean isActive = projectJSON.getBoolean("isActive");
 
             return new ProjectBuilder()
-                    .setProjectId(projectId)
-                    .setAdmin(admin)
-                    .setLeader(leader)
+                    .setId(id)
                     .setTeam(team)
                     .setTasks(tasks)
                     .setName(name)
                     .setCreationDate(creationDate)
-                    .setDeadline(deadline)
-                    .setIsActive(isActive)
+                    .setExpectedDeadline(expectedDeadline)
+                    .setActive(isActive)
                     .build();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -82,13 +79,11 @@ public class ProjectSerializer implements Serializable<Project> {
             JSONArray teamJSON = new JSONArray();
             JSONArray tasksJSON = new JSONArray();
 
-            projectJSON.put("projectId", project.getProjectId());
-            projectJSON.put("admin", userSerializer.serialize(project.getAdmin()));
-            projectJSON.put("leader", userSerializer.serialize(project.getLeader()));
+            projectJSON.put("id", project.getId());
 
             JSONObject memberJSON = new JSONObject();
-            for (Map.Entry<Integer, TeamMember> entry : project.getTeam().entrySet()) {
-                memberJSON.put("userId", entry.getKey());
+            for (Map.Entry<Integer, User> entry : project.getTeam().entrySet()) {
+                memberJSON.put("id", entry.getKey());
                 memberJSON.put("member", userSerializer.serialize(entry.getValue()));
 
                 teamJSON.put(memberJSON);
@@ -100,9 +95,10 @@ public class ProjectSerializer implements Serializable<Project> {
                 tasksJSON.put(taskSerializer.serialize(t));
 
             projectJSON.put("tasks", tasksJSON);
+
             projectJSON.put("name", project.getName());
             projectJSON.put("creationDate", project.getCreationDate());
-            projectJSON.put("deadline", project.getDeadline());
+            projectJSON.put("expectedDeadline", project.getExpectedDeadline());
             projectJSON.put("isActive", project.getIsActive());
         } catch (JSONException e) {
             e.printStackTrace();
