@@ -1,5 +1,5 @@
 package org.project.model.enums;
 
-public enum Status {
+public enum State {
     PENDING, FINISHED, CANCELED
 }

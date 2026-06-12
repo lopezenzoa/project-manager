@@ -1,35 +1,20 @@
 package org.project.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.project.model.enums.Status;
+import lombok.*;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
 public class Project {
-    private Integer projectId;
-    private Admin admin;
-    private Leader leader;
-    private HashMap<Integer, TeamMember> team;
+    private Integer id;
+    private HashMap<Integer, User> team;
     private LinkedList<Task> tasks;
     private String name;
-    private String creationDate;
-    private String deadline;
+    private LocalDate creationDate;
+    private LocalDate expectedDeadline;
     private Boolean isActive;
-
-    public Project(Integer projectId, Admin admin, Leader leader, HashMap<Integer, TeamMember> team, LinkedList<Task> tasks, String name, String creationDate, String deadline, Boolean isActive) {
-        this.projectId = projectId;
-        this.admin = admin;
-        this.leader = leader;
-        this.team = team;
-        this.tasks = tasks;
-        this.name = name;
-        this.creationDate = creationDate;
-        this.deadline = deadline;
-        this.isActive = isActive;
-    }
 }
