@@ -1,38 +1,26 @@
 package org.project.builders;
 
 import org.project.model.*;
-import org.project.model.enums.Status;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 public class ProjectBuilder {
-    private Integer projectId;
-    private Admin admin;
-    private Leader leader;
-    private HashMap<Integer, TeamMember> team;
+    private Integer id;
+    private HashMap<Integer, User> team;
     private LinkedList<Task> tasks;
     private String name;
-    private String creationDate;
-    private String deadline;
+    private LocalDate creationDate;
+    private LocalDate expectedDeadline;
     private Boolean isActive;
 
-    public ProjectBuilder setProjectId(Integer projectId) {
-        this.projectId = projectId;
+    public ProjectBuilder setId(Integer id) {
+        this.id = id;
         return this;
     }
 
-    public ProjectBuilder setAdmin(Admin admin) {
-        this.admin = admin;
-        return this;
-    }
-
-    public ProjectBuilder setLeader(Leader leader) {
-        this.leader = leader;
-        return this;
-    }
-
-    public ProjectBuilder setTeam(HashMap<Integer, TeamMember> team) {
+    public ProjectBuilder setTeam(HashMap<Integer, User> team) {
         this.team = team;
         return this;
     }
@@ -47,22 +35,22 @@ public class ProjectBuilder {
         return this;
     }
 
-    public ProjectBuilder setCreationDate(String creationDate) {
+    public ProjectBuilder setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
         return this;
     }
 
-    public ProjectBuilder setDeadline(String deadline) {
-        this.deadline = deadline;
+    public ProjectBuilder setExpectedDeadline(LocalDate expectedDeadline) {
+        this.expectedDeadline = expectedDeadline;
         return this;
     }
 
-    public ProjectBuilder setIsActive(Boolean isActive) {
-        this.isActive = isActive;
+    public ProjectBuilder setActive(Boolean active) {
+        isActive = active;
         return this;
     }
 
     public Project build() {
-        return new Project(projectId, admin, leader, team, tasks, name, creationDate, deadline, isActive);
+        return new Project(id, team, tasks, name, creationDate, expectedDeadline, isActive);
     }
 }

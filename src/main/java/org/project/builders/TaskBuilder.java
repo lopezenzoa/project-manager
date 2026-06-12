@@ -1,21 +1,23 @@
 package org.project.builders;
 
 import org.project.model.Task;
-import org.project.model.TeamMember;
-import org.project.model.enums.Status;
+import org.project.model.User;
+import org.project.model.enums.State;
+
+import java.time.LocalDate;
 
 public class TaskBuilder {
-    private Integer taskId;
+    private Integer id;
     private Integer projectId;
     private String title;
     private String description;
-    private TeamMember responsible;
-    private String creationDate;
-    private String deadline;
-    private Status status;
+    private User responsible;
+    private LocalDate creationDate;
+    private LocalDate expectedDeadline;
+    private State state;
 
-    public TaskBuilder setTaskId(Integer taskId) {
-        this.taskId = taskId;
+    public TaskBuilder setId(Integer id) {
+        this.id = id;
         return this;
     }
 
@@ -34,27 +36,27 @@ public class TaskBuilder {
         return this;
     }
 
-    public TaskBuilder setResponsible(TeamMember responsible) {
+    public TaskBuilder setResponsible(User responsible) {
         this.responsible = responsible;
         return this;
     }
 
-    public TaskBuilder setCreationDate(String creationDate) {
+    public TaskBuilder setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
         return this;
     }
 
-    public TaskBuilder setDeadline(String deadline) {
-        this.deadline = deadline;
+    public TaskBuilder setExpectedDeadline(LocalDate expectedDeadline) {
+        this.expectedDeadline = expectedDeadline;
         return this;
     }
 
-    public TaskBuilder setStatus(Status status) {
-        this.status = status;
+    public TaskBuilder setState(State state) {
+        this.state = state;
         return this;
     }
 
     public Task build() {
-        return new Task(taskId, projectId, title, description, responsible, creationDate, deadline, status);
+        return new Task(id, projectId, title, description, responsible, creationDate, expectedDeadline, state);
     }
 }
