@@ -23,7 +23,7 @@ public class TaskSerializer implements Serializable<Task> {
     public Task deserialize(JSONObject taskJSON) {
         try {
             Integer id = taskJSON.getInt("id");
-            Integer projectId = taskJSON.getInt("projectID");
+            Integer projectId = taskJSON.getInt("projectId");
             String title = taskJSON.getString("title");
             String description = taskJSON.getString("description");
             User responsible = responsibleSerializer.deserialize(taskJSON.getJSONObject("responsible"));
