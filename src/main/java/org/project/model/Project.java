@@ -9,6 +9,7 @@ import java.util.*;
 @Setter
 @ToString
 @AllArgsConstructor
+@EqualsAndHashCode
 public class Project {
     private Integer id;
     private HashMap<Integer, User> team;

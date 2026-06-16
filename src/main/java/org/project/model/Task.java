@@ -1,9 +1,6 @@
 package org.project.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.project.model.enums.State;
 
 import java.time.LocalDate;
@@ -12,6 +9,7 @@ import java.time.LocalDate;
 @Setter
 @ToString
 @AllArgsConstructor
+@EqualsAndHashCode
 public class Task {
     private Integer id;
     private Integer projectId;
