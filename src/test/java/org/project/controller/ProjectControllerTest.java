@@ -2,11 +2,8 @@ package org.project.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.project.managers.PersistenceManager;
 import org.project.model.Project;
-import org.project.model.Task;
-import org.project.model.User;
-import org.project.model.enums.Role;
-import org.project.model.enums.State;
 import org.project.serializers.ProjectSerializer;
 import org.project.serializers.TaskSerializer;
 import org.project.serializers.UserSerializer;
@@ -21,242 +18,204 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProjectControllerTest {
     Project model;
     ProjectView view;
-    ProjectSerializer serializer;
-    ProjectController projectController;
-    LinkedList<Task> tasks;
-    HashMap<Integer, User> team;
+    ProjectController controller;
+    PersistenceManager<Project> persistenceManager;
 
     @BeforeEach
     void setUp() {
         /* INITIALIZE VIEW */
         view = new ProjectView();
 
-        /* INITIALIZE SERIALIZER */
-        serializer = new ProjectSerializer(new UserSerializer(), new TaskSerializer(new UserSerializer()));
+        /* INITIALIZING PERSISTENCE MANAGER (REPOSITORY) */
+        persistenceManager = new PersistenceManager<>(
+                "projects_test.json",
+                new ProjectSerializer(
+                        new UserSerializer(),
+                        new TaskSerializer(new UserSerializer())
+                )
+        );
 
         /* INITIALIZE CONTROLLER */
-        projectController = new ProjectController(model, view, serializer);
+        controller = new ProjectController(model, view, persistenceManager);
 
-        /* INITIALIZE TEAM */
-        team = new HashMap<>();
-
-        /* INITIALIZE TASKS */
-        tasks = new LinkedList<>();
+        /* CLEANING FILE */
+        persistenceManager.clearFile();
 
         /* INITIALIZE MOCK RESPONSIBLE */
+        controller.setModel(buildProject(1));
     }
-
-    @Test
-    void shouldWriteGivenModelToAFile() {
-        /* GIVEN */
-        model = new Project(
-                1,
-                team,
-                tasks,
-                "Project 1",
+    
+    Project buildProject(Integer id) {
+        return new Project(
+                id,
+                new HashMap<>(),
+                new LinkedList<>(),
+                "Project",
                 LocalDate.now(),
                 LocalDate.of(2026, 12, 31),
                 true
         );
+    }
 
-        projectController.setModel(model);
+    /* TEST CASE 001 */
+    @Test
+    void shouldPersistANewFreshProject() {
+        /* WHEN */
+        /* THEN */
+        assertDoesNotThrow(() -> controller.create(), "ERROR ON CREATE");
+        assertTrue(persistenceManager.isModelPersisted(1));
+    }
+
+    /* TEST CASE 002 */
+    @Test
+    void shouldThrowAnExceptionWhenPersistingDuplicatedProject() {
+        /* GIVEN */
+        controller.setModel(buildProject(1));
+
+        controller.create();
 
         /* WHEN */
-        assertDoesNotThrow(() -> projectController.create(), "Message");
+        /* THEN */
+        assertThrows(RuntimeException.class, () -> controller.create());
     }
 
-
+    /* TEST CASE 003 */
     @Test
-    void shouldAddGivenModelToAFile() {
+    void shouldPersistADifferentProject() {
         /* GIVEN */
-        model = new Project(
-                2,
-                team,
-                tasks,
-                "Project 2",
-                LocalDate.now(),
-                LocalDate.of(2026, 12, 31),
-                true
-        );
+        controller.setModel(buildProject(1));
 
-        projectController.setModel(model);
+        controller.create();
 
-        assertDoesNotThrow(() -> projectController.create(), "Message");
+        controller.setModel(buildProject(2));
+
+        /* WHEN */
+        /* THEN */
+        assertDoesNotThrow(() -> controller.create(), "ERROR ON CREATE");
     }
 
+    /* TEST CASE 004 */
     @Test
-    void shouldDoNotModifyTheFileWhenAddingADuplicate() {
+    void shouldReadAPersistedProject() {
         /* GIVEN */
-        model = new Project(
-                2,
-                team,
-                tasks,
-                "Project 2",
-                LocalDate.now(),
-                LocalDate.of(2026, 12, 31),
-                true
-        );
+        controller.setModel(buildProject(1));
 
-        projectController.setModel(model);
+        controller.create();
 
-        assertDoesNotThrow(() -> projectController.create(), "Message");
+        /* WHEN */
+        /* THEN */
+        assertDoesNotThrow(() -> controller.read(), "ERROR ON READ");
+        assertTrue(persistenceManager.isModelPersisted(1));
     }
 
+    /* TEST CASE 005 */
     @Test
-    void shouldReadGivenModelFromFile() {
+    void shouldThrowAnExceptionWhenReadingAnUnpersistedProject() {
         /* GIVEN */
-        model = new Project(
-                2,
-                team,
-                tasks,
-                "Project 2",
-                LocalDate.now(),
-                LocalDate.of(2026, 12, 31),
-                true
-        );
+        controller.setModel(buildProject(1));
 
-        projectController.setModel(model);
+        controller.create();
 
-        assertDoesNotThrow(() -> projectController.read(), "Message");
+        controller.setModel(buildProject(2));
+
+        /* WHEN */
+        /* THEN */
+        assertThrows(RuntimeException.class, () -> controller.read());
     }
 
+    /* TEST CASE 006 */
     @Test
-    void shouldDoNothingWhenReadingUnsavedModel() {
+    void shouldUpdateAPersistedProject() {
         /* GIVEN */
-        model = new Project(
-                6,
-                team,
-                tasks,
-                "Project 2",
-                LocalDate.now(),
-                LocalDate.of(2026, 12, 31),
-                true
-        );
+        controller.setModel(buildProject(1));
 
-        projectController.setModel(model);
+        controller.create();
 
-        assertDoesNotThrow(() -> projectController.read(), "Message");
+        Project newModel = buildProject(1);
+
+        newModel.setName("Project Update");
+        newModel.setExpectedDeadline(LocalDate.of(2027, 12, 31));
+
+        /* WHEN */
+        /* THEN */
+        assertDoesNotThrow(() -> controller.update(newModel), "ERROR ON UPDATE");
+        assertTrue(persistenceManager.isModelPersisted(1));
     }
 
+    /* TEST CASE 007 */
     @Test
-    void shouldUpdateModelOnFile() {
+    void shouldThrowAnExceptionWhenUpdatingAnUnpersistedProject() {
         /* GIVEN */
-        model = new Project(
-                2,
-                team,
-                tasks,
-                "Project 2",
-                LocalDate.now(),
-                LocalDate.of(2026, 12, 31),
-                true
-        );
+        controller.setModel(buildProject(1));
 
-        User user = new User(
-                1,
-                "Enzo López",
-                "enzo@gmail.com",
-                "123",
-                true,
-                Role.BACKEND_ENGINEER
-        );
+        controller.create();
 
-        Task task = new Task(
-                2,
-                1,
-                "Do Something 2",
-                "Do Something Desc 2",
-                user,
-                LocalDate.of(2026, 6, 14),
-                LocalDate.of(2026, 12, 31),
-                State.PENDING
-        );
+        Project newModel = buildProject(2);
 
-        projectController.setModel(model);
-
-        Project newModel = model;
-
-        team.put(user.getId(), user);
-        tasks.add(task);
-
-        newModel.setTeam(team);
-        newModel.setTasks(tasks);
-
-        assertDoesNotThrow(() -> projectController.update(newModel), "Message");
+        /* WHEN */
+        /* THEN */
+        assertThrows(RuntimeException.class, () -> controller.update(newModel));
     }
 
+    /* TEST CASE 008 */
     @Test
-    void shouldDoNothingWhenUpdatingUnsavedModel() {
+    void shouldDeletePersistedProject() {
         /* GIVEN */
-        model = new Project(
-                6,
-                team,
-                tasks,
-                "Project 2",
-                LocalDate.now(),
-                LocalDate.of(2026, 12, 31),
-                true
-        );
+        controller.setModel(buildProject(1));
 
-        User user = new User(
-                1,
-                "Enzo López",
-                "enzo@gmail.com",
-                "123",
-                true,
-                Role.BACKEND_ENGINEER
-        );
+        controller.create();
 
-        Task task = new Task(
-                2,
-                1,
-                "Do Something 2",
-                "Do Something Desc 2",
-                user,
-                LocalDate.of(2026, 6, 14),
-                LocalDate.of(2026, 12, 31),
-                State.PENDING
-        );
-
-        Task task2 = new Task(
-                2,
-                1,
-                "Do Something 2",
-                "Do Something Desc 2",
-                user,
-                LocalDate.of(2026, 6, 14),
-                LocalDate.of(2026, 12, 31),
-                State.PENDING
-        );
-
-        projectController.setModel(model);
-
-        Project newModel = model;
-
-        team.put(user.getId(), user);
-        tasks.add(task);
-        tasks.add(task2);
-
-        newModel.setTeam(team);
-        newModel.setTasks(tasks);
-
-        assertDoesNotThrow(() -> projectController.update(newModel), "Message");
+        /* WHEN */
+        /* THEN */
+        assertDoesNotThrow(() -> controller.delete(), "ERROR ON DELETE");
+        assertTrue(persistenceManager.isModelPersisted(1));
     }
 
+    /* TEST CASE 009 */
     @Test
-    void shouldDeleteModelFromFile() {
+    void shouldThrowAnExceptionWhenDeletingAnUnpersistedProject() {
         /* GIVEN */
-        model = new Project(
-                2,
-                team,
-                tasks,
-                "Project 2",
-                LocalDate.now(),
-                LocalDate.of(2026, 12, 31),
-                true
-        );
+        controller.setModel(buildProject(1));
 
-        projectController.setModel(model);
+        controller.create();
 
-        assertDoesNotThrow(() -> projectController.delete(), "Message");
+        controller.setModel(buildProject(2));
+
+        /* WHEN */
+        /* THEN */
+        assertThrows(RuntimeException.class, () -> controller.delete());
+    }
+
+    /* TEST CASE 010 */
+    @Test
+    void shouldThrowAnExceptionWhenPersistingAnEmptyProject() {
+        /* GIVEN */
+        Project model = buildProject(2);
+
+        model.setName("");
+
+        controller.setModel(model);
+
+        /* WHEN */
+        /* THEN */
+        assertThrows(RuntimeException.class, () -> controller.create());
+        assertFalse(persistenceManager.isModelPersisted(2));
+    }
+
+    /* TEST CASE 011 */
+    @Test
+    void shouldThrowAnExceptionWhenPersistingAnInvalidCreationDateOrExpectedDeadline() {
+        /* GIVEN */
+        Project model = buildProject(2);
+
+        model.setCreationDate(LocalDate.of(2025, 6, 18));
+        model.setExpectedDeadline(LocalDate.of(2025, 6, 18));
+
+        controller.setModel(model);
+
+        /* WHEN */
+        /* THEN */
+        assertThrows(RuntimeException.class, () -> controller.create());
+        assertFalse(persistenceManager.isModelPersisted(2));
     }
 }

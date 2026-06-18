@@ -2,6 +2,7 @@ package org.project.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.project.managers.PersistenceManager;
 import org.project.model.Task;
 import org.project.model.User;
 import org.project.model.enums.Role;
@@ -17,192 +18,232 @@ import static org.junit.jupiter.api.Assertions.*;
 class TaskControllerTest {
     Task model;
     TaskView view;
-    TaskSerializer serializer;
-    TaskController taskController;
-    User responsible;
+    TaskController controller;
+    PersistenceManager<Task> persistenceManager;
 
     @BeforeEach
     void setUp() {
         /* INITIALIZE VIEW */
         view = new TaskView();
 
-        /* INITIALIZE SERIALIZER */
-        serializer = new TaskSerializer(new UserSerializer());
+        /* INITIALIZING PERSISTENCE MANAGER (REPOSITORY) */
+        persistenceManager = new PersistenceManager<>(
+                "tasks_test.json",
+                new TaskSerializer(new UserSerializer())
+        );
 
         /* INITIALIZE CONTROLLER */
-        taskController = new TaskController(model, view, serializer);
+        controller = new TaskController(model, view, persistenceManager);
 
-        /* INITIALIZE MOCK RESPONSIBLE */
-        responsible = new User(
-                1,
-                "Enzo López",
-                "enzo@gmail.com",
-                "123",
-                true,
-                Role.BACKEND_ENGINEER
-        );
+        /* CLEARING FILE */
+        persistenceManager.clearFile();
+
+        /* ADDING A MOCK MODEL */
+        controller.setModel(buildTask(1));
+        // controller.create();
     }
-
-    @Test
-    void shouldWriteGivenModelToAFile() {
-        /* GIVEN */
-        model = new Task(
+    
+    Task buildTask(Integer id) {
+        return new Task(
+                id,
                 1,
-                1,
-                "Do Something",
-                "Do Something Desc",
-                responsible,
+                "Task",
+                "Task (desc)",
+                new User(
+                        id,
+                        "Enzo Lopez",
+                        "Enzo" + Math.round(Math.random() * 10) + "@gmail.com",
+                        "123",
+                        true,
+                        Role.BACKEND_ENGINEER
+                ),
                 LocalDate.now(),
                 LocalDate.of(2026, 12, 31),
                 State.PENDING
         );
+    }
 
-        taskController.setModel(model);
+    /* TEST CASE 001 */
+    @Test
+    void shouldPersistANewFreshTask() {
+        /* WHEN */
+        /* THEN */
+        assertDoesNotThrow(() -> controller.create(), "ERROR ON CREATE");
+        assertTrue(persistenceManager.isModelPersisted(1));
+    }
+
+    /* TEST CASE 002 */
+    @Test
+    void shouldThrowAnExceptionWhenPersistingDuplicatedTask() {
+        /* GIVEN */
+        controller.setModel(buildTask(1));
+
+        controller.create();
 
         /* WHEN */
-        assertDoesNotThrow(() -> taskController.create(), "Message");
+        /* THEN */
+        assertThrows(RuntimeException.class, () -> controller.create());
     }
 
-
+    /* TEST CASE 003 */
     @Test
-    void shouldAddGivenModelToAFile() {
-        model = new Task(
-                2,
-                1,
-                "Do Something 2",
-                "Do Something Desc 2",
-                responsible,
-                LocalDate.of(2026, 6, 14),
-                LocalDate.of(2026, 12, 31),
-                State.PENDING
-        );
-
-        taskController.setModel(model);
-
-        assertDoesNotThrow(() -> taskController.create(), "Message");
-    }
-
-    @Test
-    void shouldDoNotModifyTheFileWhenAddingADuplicate() {
+    void shouldPersistADifferentTask() {
         /* GIVEN */
-        model = new Task(
-                2,
-                1,
-                "Do Something 2",
-                "Do Something Desc 2",
-                responsible,
-                LocalDate.of(2026, 6, 14),
-                LocalDate.of(2026, 12, 31),
-                State.PENDING
-        );
+        controller.setModel(buildTask(1));
 
-        taskController.setModel(model);
+        controller.create();
 
-        assertDoesNotThrow(() -> taskController.create(), "Message");
+        controller.setModel(buildTask(2));
+
+        /* WHEN */
+        /* THEN */
+        assertDoesNotThrow(() -> controller.create(), "ERROR ON CREATE");
     }
 
+    /* TEST CASE 004 */
     @Test
-    void shouldReadGivenModelFromFile() {
+    void shouldReadAPersistedTask() {
         /* GIVEN */
-        model = new Task(
-                2,
-                1,
-                "Do Something 2",
-                "Do Something Desc 2",
-                responsible,
-                LocalDate.of(2026, 6, 14),
-                LocalDate.of(2026, 12, 31),
-                State.PENDING
-        );
+        controller.setModel(buildTask(1));
 
-        taskController.setModel(model);
+        controller.create();
 
-        assertDoesNotThrow(() -> taskController.read(), "Message");
+        /* WHEN */
+        /* THEN */
+        assertDoesNotThrow(() -> controller.read(), "ERROR ON READ");
+        assertTrue(persistenceManager.isModelPersisted(1));
     }
 
+    /* TEST CASE 005 */
     @Test
-    void shouldDoNothingWhenReadingUnsavedModel() {
+    void shouldThrowAnExceptionWhenReadingAnUnpersistedTask() {
         /* GIVEN */
-        model = new Task(
-                6,
-                1,
-                "Do Something 2",
-                "Do Something Desc 2",
-                responsible,
-                LocalDate.of(2026, 6, 14),
-                LocalDate.of(2026, 12, 31),
-                State.PENDING
-        );
+        controller.setModel(buildTask(1));
 
-        taskController.setModel(model);
+        controller.create();
 
-        assertDoesNotThrow(() -> taskController.read(), "Message");
+        controller.setModel(buildTask(2));
+
+        /* WHEN */
+        /* THEN */
+        assertThrows(RuntimeException.class, () -> controller.read());
     }
 
+    /* TEST CASE 006 */
     @Test
-    void shouldUpdateModelOnFile() {
+    void shouldUpdateAPersistedTask() {
         /* GIVEN */
-        model = new Task(
-                2,
-                1,
-                "Do Something 2",
-                "Do Something Desc 2",
-                responsible,
-                LocalDate.of(2026, 6, 14),
-                LocalDate.of(2026, 12, 31),
-                State.PENDING
-        );
+        controller.setModel(buildTask(1));
 
-        taskController.setModel(model);
+        controller.create();
 
-        Task newModel = model;
+        Task newModel = buildTask(1);
 
-        newModel.setTitle("Do Something 3");
+        newModel.setTitle("Task Update");
         newModel.setExpectedDeadline(LocalDate.of(2027, 12, 31));
+        newModel.setState(State.FINISHED);
 
-        assertDoesNotThrow(() -> taskController.update(newModel), "Message");
+        /* WHEN */
+        /* THEN */
+        assertDoesNotThrow(() -> controller.update(newModel), "ERROR ON UPDATE");
+        assertTrue(persistenceManager.isModelPersisted(1));
     }
 
+    /* TEST CASE 007 */
     @Test
-    void shouldDoNothingWhenUpdatingUnsavedModel() {
+    void shouldThrowAnExceptionWhenUpdatingAnUnpersistedTask() {
         /* GIVEN */
-        model = new Task(
-                6,
-                1,
-                "Do Something 2",
-                "Do Something Desc 2",
-                responsible,
-                LocalDate.of(2026, 6, 14),
-                LocalDate.of(2026, 12, 31),
-                State.PENDING
-        );
+        controller.setModel(buildTask(1));
 
-        taskController.setModel(model);
+        controller.create();
 
-        Task newModel = model;
+        Task newModel = buildTask(2);
 
-        newModel.setTitle("Do Something 3");
-        newModel.setExpectedDeadline(LocalDate.of(2027, 12, 31));
-
-        assertDoesNotThrow(() -> taskController.update(newModel), "Message");
+        /* WHEN */
+        /* THEN */
+        assertThrows(RuntimeException.class, () -> controller.update(newModel));
     }
 
+    /* TEST CASE 008 */
     @Test
-    void shouldDeleteModelFromFile() {
+    void shouldDeletePersistedTask() {
         /* GIVEN */
-        model = new Task(
-                2,
+        controller.setModel(buildTask(1));
+
+        controller.create();
+
+        /* WHEN */
+        /* THEN */
+        assertDoesNotThrow(() -> controller.delete(), "ERROR ON DELETE");
+        assertTrue(persistenceManager.isModelPersisted(1));
+    }
+
+    /* TEST CASE 009 */
+    @Test
+    void shouldThrowAnExceptionWhenDeletingAnUnpersistedTask() {
+        /* GIVEN */
+        controller.setModel(buildTask(1));
+
+        controller.create();
+
+        controller.setModel(buildTask(2));
+
+        /* WHEN */
+        /* THEN */
+        assertThrows(RuntimeException.class, () -> controller.delete());
+    }
+
+    /* TEST CASE 010 */
+    @Test
+    void shouldThrowAnExceptionWhenPersistingAnEmptyTask() {
+        /* GIVEN */
+        controller.setModel(new Task(
                 1,
-                "Do Something 2",
-                "Do Something Desc 2",
-                responsible,
-                LocalDate.of(2026, 6, 14),
-                LocalDate.of(2026, 12, 31),
+                1,
+                "",
+                "",
+                buildTask(1).getResponsible(),
+                LocalDate.now(),
+                LocalDate.now(),
                 State.PENDING
-        );
+        ));
 
-        taskController.setModel(model);
+        /* WHEN */
+        /* THEN */
+        assertThrows(RuntimeException.class, () -> controller.create());
+        assertFalse(persistenceManager.isModelPersisted(1));
+    }
 
-        assertDoesNotThrow(() -> taskController.delete(), "Message");
+    /* TEST CASE 011 */
+    @Test
+    void shouldThrowAnExceptionWhenPersistingANegativeProjectId() {
+        /* GIVEN */
+        Task model = buildTask(2);
+
+        model.setProjectId(-2);
+
+        controller.setModel(model);
+
+        /* WHEN */
+        /* THEN */
+        assertThrows(RuntimeException.class, () -> controller.create());
+        assertFalse(persistenceManager.isModelPersisted(1));
+    }
+
+    /* TEST CASE 012 */
+    @Test
+    void shouldThrowAnExceptionWhenPersistingAnInvalidCreationDateOrExpectedDeadline() {
+        /* GIVEN */
+        Task model = buildTask(2);
+
+        model.setCreationDate(LocalDate.of(2025, 6, 18));
+        model.setExpectedDeadline(LocalDate.of(2025, 6, 18));
+
+        controller.setModel(model);
+
+        /* WHEN */
+        /* THEN */
+        assertThrows(RuntimeException.class, () -> controller.create());
+        assertFalse(persistenceManager.isModelPersisted(2));
     }
 }

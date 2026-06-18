@@ -6,7 +6,9 @@ import lombok.Setter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.project.controller.interfaces.Crudable;
+import org.project.managers.PersistenceManager;
 import org.project.model.Task;
+import org.project.model.User;
 import org.project.model.enums.State;
 import org.project.serializers.interfaces.Serializable;
 import org.project.view.TaskView;
@@ -16,170 +18,72 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
-@Setter
 @Getter
 public class TaskController implements Crudable<Task> {
-    public Task model;
+    @Setter public Task model;
     public TaskView view;
-    private final Serializable<Task> serializer;
+    private PersistenceManager<Task> persistenceManager;
 
     @Override
-    public void create() throws IOException {
-        if (!isModelPersisted()) {
-            addModelToPersistence();
+    public void create() {
+        try {
+            checkModelIntegrity(model);
+
+            persistenceManager.addModelToPersistence(model.getId(), model);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("ERROR ON CREATE");
         }
     }
 
     @Override
-    public void read() throws IOException {
-        if (isModelPersisted()) {
-            Task task = getModelFromPersistence();
+    public void read() {
+        try {
+            if (!persistenceManager.isModelPersisted(model.getId()))
+                throw new RuntimeException();
 
-            if (task != null)
-                view.printTask(task);
+            view.printTask(model);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("ERROR ON READ");
         }
     }
 
     @Override
-    public void update(Task newModel) throws IOException {
-        if (isModelPersisted()) {
-            Task model = getModelFromPersistence();
+    public void update(Task newModel) {
+        try {
+            checkModelIntegrity(newModel);
 
-            if (model != null) {
-                model.setProjectId(newModel.getProjectId());
-                model.setTitle(newModel.getTitle());
-                model.setDescription(newModel.getDescription());
-                model.setResponsible(newModel.getResponsible());
-                model.setCreationDate(newModel.getCreationDate());
-                model.setExpectedDeadline(newModel.getExpectedDeadline());
-                model.setState(newModel.getState());
-            }
-
-            setModel(model);
-
-            updateModelInPersistence(model);
+            persistenceManager.updateModelInPersistence(newModel.getId(), newModel);
+            this.model = newModel;
+        } catch (RuntimeException e) {
+            throw new RuntimeException("ERROR ON UPDATE");
         }
     }
 
     @Override
-    public void delete() throws IOException {
-        if (isModelPersisted()) {
+    public void delete() {
+        try {
             model.setState(State.CANCELED);
-            update(model);
+            persistenceManager.updateModelInPersistence(model.getId(), model);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("ERROR ON DELETE");
         }
     }
 
-    private Boolean isModelPersisted() throws IOException {
-        Path fileName = Paths.get("/home/lopezenzoa/Documents/project-manager/src/main/resources/", "tasks.json");
-
-        try (FileReader fileReader = new FileReader(fileName.toFile())) {
-            String content = fileReader.readAllAsString();
-            JSONArray tasksJSON = new JSONArray(content);
-
-            for (Object object : tasksJSON) {
-                Integer id = ((JSONObject) object).getInt("id");
-
-                if (id.equals(model.getId()))
-                    return true;
-            }
-        } catch (IOException e) {
-            throw new IOException();
-        }
-
-        return false;
-    }
-
-    private Task getModelFromPersistence() throws IOException {
-        Path fileName = Paths.get("/home/lopezenzoa/Documents/project-manager/src/main/resources/", "tasks.json");
-
-        try (FileReader fileReader = new FileReader(fileName.toFile())) {
-            String content = fileReader.readAllAsString();
-
-            if (content.isEmpty())
-                return null;
-
-            JSONArray tasksJSON = new JSONArray(content);
-
-            for (Object object : tasksJSON) {
-                JSONObject taskJSON = ((JSONObject) object);
-                Integer id = taskJSON.getInt("id");
-
-                if (id.equals(model.getId()))
-                    return serializer.deserialize(taskJSON);
-            }
-        } catch (IOException e) {
-            throw new IOException();
-        }
-
-        return null;
-    }
-
-    private List<Task> getAllModelsFromPersistence() throws IOException {
-        Path fileName = Paths.get("/home/lopezenzoa/Documents/project-manager/src/main/resources/", "tasks.json");
-
-        try (FileReader fileReader = new FileReader(fileName.toFile())) {
-            String content = fileReader.readAllAsString();
-            JSONArray tasksJSON = new JSONArray(content);
-
-            List<Task> tasks = new ArrayList<>();
-
-            for (Object object : tasksJSON) {
-                JSONObject taskJSON = ((JSONObject) object);
-                tasks.add(serializer.deserialize(taskJSON));
-            }
-
-            return tasks;
-        } catch (IOException e) {
-            throw new IOException();
-        }
-    }
-
-    private void addModelToPersistence() throws IOException {
-        Path fileName = Paths.get("/home/lopezenzoa/Documents/project-manager/src/main/resources/", "tasks.json");
-
-        List<Task> models = getAllModelsFromPersistence();
-        JSONArray tasksJSON = new JSONArray();
-
-        for (Task model : models) {
-            JSONObject taskJSON = serializer.serialize(model);
-            tasksJSON.put(taskJSON);
-        }
-
-        /* APPENDING THE NEW MODEL */
-        JSONObject currentModelJSON = serializer.serialize(model);
-        tasksJSON.put(currentModelJSON);
-
-        try (FileWriter file = new FileWriter(fileName.toFile())) {
-            file.write(tasksJSON.toString(4));
-        } catch (IOException e) {
-            throw new IOException();
-        }
-    }
-
-    public void updateModelInPersistence(Task model) throws IOException {
-        List<Task> tasks = getAllModelsFromPersistence();
-        tasks.removeIf(task -> task.getId().equals(model.getId()));
-
-        Path fileName = Paths.get("/home/lopezenzoa/Documents/project-manager/src/main/resources/", "tasks.json");
-
-        JSONArray tasksJSON = new JSONArray();
-
-        for (Task task : tasks) {
-            JSONObject taskJSON = serializer.serialize(task);
-            tasksJSON.put(taskJSON);
-        }
-
-        JSONObject newModelJSON = serializer.serialize(model);
-        tasksJSON.put(newModelJSON);
-
-        try (FileWriter file = new FileWriter(fileName.toFile())) {
-            file.write(tasksJSON.toString(4));
-        } catch (IOException e) {
-            throw new IOException();
-        }
+    public void checkModelIntegrity(Task model) throws RuntimeException {
+        /* VERIFYING MODEL INTEGRITY */
+        if (
+                model.getProjectId() <= 0
+                        || model.getTitle().trim().isEmpty()
+                        || model.getDescription().trim().isEmpty()
+                        || model.getCreationDate().isBefore(LocalDate.now())
+                        || model.getExpectedDeadline().isBefore(LocalDate.now())
+                        || model.getExpectedDeadline().isEqual(model.getCreationDate())
+        )
+            throw new RuntimeException("MODEL NOT VALID");
     }
 }
